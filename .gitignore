@@ -9,3 +9,7 @@ webSever/webManagement/auth/__pycache__/auth.cpython-310.pyc
 webSever/__pycache__/main.cpython-310.pyc
 webSever/__pycache__/models.cpython-310.pyc
 webSever/__pycache__/__init__.cpython-310.pyc
+migrations/versions/__pycache__/9a928a9fef06_add_admin.cpython-310.pyc
+migrations/versions/9a928a9fef06_add_admin.py
+migrations/__pycache__/env.cpython-310.pyc
+migrations/script.py.mako
