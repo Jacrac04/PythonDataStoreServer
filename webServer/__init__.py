@@ -29,6 +29,7 @@ def create_app():
     admin = Admin(app, name='Admin', template_mode='bootstrap3')
 
     from .models import User
+    from .pythonInterface.models import pythonData
 
     @login_manager.user_loader
     def load_user(user_id):
@@ -36,6 +37,7 @@ def create_app():
         return User.query.get(int(user_id))
 
     admin.add_view(ModelView(User, db.session))
+    admin.add_view(ModelView(pythonData, db.session))
     # # blueprint for auth routes in our app
     from .webManagement.auth.auth import auth as auth_blueprint
     app.register_blueprint(auth_blueprint)
@@ -43,5 +45,9 @@ def create_app():
     # blueprint for non-auth parts of app
     from .main import main as main_blueprint
     app.register_blueprint(main_blueprint)
+    
+    from .pythonInterface.api import api as api_blueprint
+    app.register_blueprint(api_blueprint, url_prefix='/api')
+
 
     return app
