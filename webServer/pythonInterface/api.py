@@ -10,7 +10,7 @@ api = Blueprint('api', __name__)
 
 @api.route('/get/<int:id>', methods=['GET'])
 def getData(id):
-    storedData = pythonData.query.filter_by(id=id).first()
+    storedData = PythonData.query.filter_by(id=id).first()
     if not storedData:
         return 'No Data Found'
     return storedData.dataJson
@@ -18,7 +18,7 @@ def getData(id):
 @api.route('/create', methods=['post'])
 def createData():
     data = request.get_json()
-    newData = pythonData(dataJson=data)
+    newData = PythonData(dataJson=data)
     db.session.add(newData)
     db.session.commit()
     return str(newData.id)
@@ -27,7 +27,7 @@ def createData():
 @api.route('/update/<int:id>', methods=['post'])
 def updateData(id):
     data = request.get_json()
-    storedData = pythonData.query.filter_by(id=id).first()
+    storedData = PythonData.query.filter_by(id=id).first()
     if not storedData:
         return 'No Data Found'
     storedData.dataJson = data
@@ -39,4 +39,12 @@ def updateData(id):
 def test(id):
     data = json.loads(request.get_json())
     dataObj = Data(id, data['token'])
+    return dataObj.getData()
+
+# Test Append
+@api.route('/testAppend/<int:id>', methods=['post'])
+def appendData(id):
+    data = json.loads(request.get_json())
+    dataObj = Data(id, data['token'])
+    dataObj.appendData(data['data'])
     return dataObj.getData()
