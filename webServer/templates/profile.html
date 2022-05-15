@@ -1,9 +1,7 @@
-<!-- templates/profile.html -->
+{% extends 'layout.html' %}
 
-{% extends "base.html" %}
-
-{% block content %}
-<h1 class="title">
-  Welcome, {{ name }}!
-</h1>
+{% block body %}
+  <h1>Dashboard <small> Welcome {{current_user.name}}</small></h1>
 {% endblock %}
+
+

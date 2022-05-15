@@ -22,3 +22,5 @@ migrations/README
 .env
 webServer/dataManagment/__pycache__/management.cpython-310.pyc
 webServer/dataManagment/__pycache__/models.cpython-310.pyc
+webServer/webManagement/admin/__pycache__/core.cpython-310.pyc
+__pycache__/run.cpython-310.pyc

@@ -9,8 +9,11 @@ class Data():
         'a': 1, # Can append 
         'r': 2, # Can read
         'a+': 3, # Can append and read
-        'w': 4,  # Can write and read
+        'w': 4  # Can write and read
     }
+    appendPerms = [1,3,4]
+    readPerms = [2,3,4]
+    writePerms = [4]
     
     def __init__(self, id, token):
         self.id = id
@@ -26,17 +29,24 @@ class Data():
             return None
         self.authToken = authToken
         self.data = data
-        self.mode = authToken.tokenType
+        self.modeNum = Data.modeDict[authToken.tokenType] if authToken.tokenType in Data.modeDict else 0
+        print(self.modeNum)
         
     
     def getData(self):
+        if not self.modeNum in Data.readPerms:
+            return 'No permission'
         return self.data.dataJson
     
     def setData(self, data):
+        if not self.modeNum in Data.writePerms:
+            return 'No permission'
         self.data.dataJson = data
         db.session.commit()
         
     def appendData(self, newData):
+        if not self.modeNum in Data.appendPerms:
+            return 'No permission'
         newData = json.loads(newData)
         data = json.loads(self.data.dataJson)
         if type(newData) != type(data):
