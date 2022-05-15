@@ -1,6 +1,8 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from webServer import db
-from .models import pythonData
+from .models import PythonData
+from ..dataManagment.management import Data
+import json
 
 api = Blueprint('api', __name__)
 
@@ -31,3 +33,10 @@ def updateData(id):
     storedData.dataJson = data
     db.session.commit()
     return str(storedData.id)
+
+# Test New
+@api.route('/test/<int:id>', methods=['post'])
+def test(id):
+    data = json.loads(request.get_json())
+    dataObj = Data(id, data['token'])
+    return dataObj.getData()

@@ -29,7 +29,8 @@ def create_app():
     admin = Admin(app, name='Admin', template_mode='bootstrap3')
 
     from .models import User
-    from .pythonInterface.models import pythonData
+    from .pythonInterface.models import PythonData
+    from .dataManagment.models import PythonDataAuthTokens
 
     @login_manager.user_loader
     def load_user(user_id):
@@ -37,7 +38,8 @@ def create_app():
         return User.query.get(int(user_id))
 
     admin.add_view(ModelView(User, db.session))
-    admin.add_view(ModelView(pythonData, db.session))
+    admin.add_view(ModelView(PythonData, db.session))
+    admin.add_view(ModelView(PythonDataAuthTokens, db.session))
     # # blueprint for auth routes in our app
     from .webManagement.auth.auth import auth as auth_blueprint
     app.register_blueprint(auth_blueprint)

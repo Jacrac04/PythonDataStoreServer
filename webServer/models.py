@@ -1,6 +1,7 @@
 from flask_login import UserMixin
 from . import db
-from .pythonInterface.models import pythonData
+from .pythonInterface.models import PythonData
+from .dataManagment.models import PythonDataAuthTokens
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True) # primary keys are required by SQLAlchemy
