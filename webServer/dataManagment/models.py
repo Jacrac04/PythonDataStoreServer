@@ -9,3 +9,9 @@ class PythonDataAuthTokens(db.Model):
     authToken = db.Column(db.String(),default=uuidGen())
     tokenType = db.Column(db.String(10))
     pythonDataId = db.Column(db.Integer, db.ForeignKey('python_data.id'))
+    
+    def __init__(self, tokenType, pythonDataId):
+        self.authToken = uuidGen()
+        self.tokenType = tokenType
+        self.pythonDataId = pythonDataId
+        

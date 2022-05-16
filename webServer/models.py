@@ -2,6 +2,7 @@ from flask_login import UserMixin
 from . import db
 from .pythonInterface.models import PythonData
 from .dataManagment.models import PythonDataAuthTokens
+from werkzeug.security import generate_password_hash
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True) # primary keys are required by SQLAlchemy
@@ -9,6 +10,16 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(100))
     name = db.Column(db.String(1000))
     admin = db.Column(db.Boolean, default=False)
+    
+    def __init__(self, email, password, name, admin=False):
+        self.email = email
+        self.password = self._generate_password_hash(password)
+        self.name = name
+        self.admin = admin
+    
+    @staticmethod
+    def _generate_password_hash (password_plaintext: str):
+        return generate_password_hash(password_plaintext, method='sha256')
     
     @property
     def is_authenticated(self):

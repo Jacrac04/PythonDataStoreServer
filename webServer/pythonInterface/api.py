@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from webServer import db
-from .models import PythonData
+from ..models import PythonData, PythonDataAuthTokens
 from ..dataManagment.management import Data
 import json
 
@@ -48,3 +48,10 @@ def appendData(id):
     dataObj = Data(id, data['token'])
     dataObj.appendData(data['data'])
     return dataObj.getData()
+
+@api.route('/testCreateAuth/<int:id>', methods=['GET'])
+def createAuthToken(id):
+    newToken = PythonDataAuthTokens(tokenType='r', pythonDataId=id)
+    db.session.add(newToken)
+    db.session.commit()
+    return str(newToken.authToken)
