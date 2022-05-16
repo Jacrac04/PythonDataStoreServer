@@ -24,3 +24,8 @@ webServer/dataManagment/__pycache__/management.cpython-310.pyc
 webServer/dataManagment/__pycache__/models.cpython-310.pyc
 webServer/webManagement/admin/__pycache__/core.cpython-310.pyc
 __pycache__/run.cpython-310.pyc
+tests/__pycache__/__init__.cpython-310.pyc
+tests/__pycache__/conftest.cpython-310-pytest-7.1.2.pyc
+tests/functional/__pycache__/test_auth.cpython-310-pytest-7.1.2.pyc
+tests/functional/__pycache__/__init__.cpython-310.pyc
+tests/unit/__pycache__/test_models.cpython-310-pytest-7.1.2.pyc
