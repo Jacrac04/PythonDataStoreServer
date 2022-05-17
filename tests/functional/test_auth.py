@@ -6,7 +6,7 @@ def test_home_page():
     WHEN the '/' page is requested (GET)
     THEN check that the response is valid
     """
-    flask_app = create_app()
+    flask_app = create_app('Config.TestingConfig')
     # Create a test client using the Flask application configured for testing
     with flask_app.test_client() as test_client:
         response = test_client.get('/')

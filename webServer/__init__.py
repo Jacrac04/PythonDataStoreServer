@@ -7,17 +7,19 @@ from flask_login import LoginManager
 
 from flask_admin.contrib.sqla import ModelView
 from flask_admin import Admin
+from config import Config 
+import os
 
 
 # init SQLAlchemy so we can use it later in our models
 db = SQLAlchemy()
 
-def create_app():
+def create_app(CONFIG_TYPE=None):
     app = Flask(__name__)
 
-    app.config['SECRET_KEY'] = '9OLWxND4o83j4K4iuopO'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    if not CONFIG_TYPE:
+        CONFIG_TYPE = os.getenv('CONFIG_TYPE', default='Config.DevelopmentConfig')
+    app.config.from_object(CONFIG_TYPE)
 
     db.init_app(app)
     migrate = Migrate(app, db)
