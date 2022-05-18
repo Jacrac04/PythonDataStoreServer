@@ -1,7 +1,7 @@
 from flask_login import UserMixin
 from . import db
 from .pythonInterface.models import PythonData
-from .dataManagment.models import PythonDataAuthTokens
+from .dataManagment.models import PythonDataAuthTokens, Project
 from werkzeug.security import generate_password_hash
 
 class User(UserMixin, db.Model):
@@ -10,6 +10,7 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(100))
     name = db.Column(db.String(1000))
     admin = db.Column(db.Boolean, default=False)
+    projects = db.relationship('Project', backref='User', lazy='dynamic')
     
     def __init__(self, email, password, name, admin=False):
         self.email = email

@@ -15,3 +15,13 @@ class PythonDataAuthTokens(db.Model):
         self.tokenType = tokenType
         self.pythonDataId = pythonDataId
         
+class Project(db.Model):
+    id = db.Column(db.Integer, primary_key=True) 
+    name = db.Column(db.String(100))
+    # pythonDataId = db.Column(db.Integer, db.ForeignKey('python_data.id'))
+    pythonDataId = db.relationship('PythonData', backref='Project', lazy='dynamic')
+    owner =  db.Column(db.Integer, db.ForeignKey('user.id'))
+    def __init__(self, name, pythonDataId, owner):
+        self.name = name
+        self.pythonDataId = pythonDataId
+        self.owner = owner

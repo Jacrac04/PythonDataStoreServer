@@ -22,7 +22,7 @@ def create_app(CONFIG_TYPE=None):
     app.config.from_object(CONFIG_TYPE)
 
     db.init_app(app)
-    migrate = Migrate(app, db)
+    migrate = Migrate(app, db, render_as_batch=True)
 
     login_manager = LoginManager()
     login_manager.login_view = 'auth.login'
