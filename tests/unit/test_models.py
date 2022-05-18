@@ -1,14 +1,14 @@
 from webServer import models
 
-def test_user_model():
+def test_user_model(newUser):
     """
     GIVEN a User model
     WHEN a new User is created
     THEN check that the email and password fields are defined correctly
     """
-    user = models.User('test@test.com', 'test', 'test')
-    assert user.email == 'test@test.com'
-    assert user.password != 'test'
+    # user = models.User('test@test.com', 'test', 'test')
+    assert newUser.email == 'test@test.com'
+    assert newUser.password != 'test'
     
 def test_pythonData_model():
     """

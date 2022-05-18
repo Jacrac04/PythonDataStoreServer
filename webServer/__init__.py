@@ -18,7 +18,7 @@ def create_app(CONFIG_TYPE=None):
     app = Flask(__name__)
 
     if not CONFIG_TYPE:
-        CONFIG_TYPE = os.getenv('CONFIG_TYPE', default='Config.DevelopmentConfig')
+        CONFIG_TYPE = os.getenv('CONFIG_TYPE', default='config.DevelopmentConfig')
     app.config.from_object(CONFIG_TYPE)
 
     db.init_app(app)

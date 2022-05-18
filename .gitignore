@@ -34,3 +34,4 @@ webServer/dev.sqlite
 webServer/test.sqlite
 .env
 __pycache__/config.cpython-310.pyc
+.coverage
