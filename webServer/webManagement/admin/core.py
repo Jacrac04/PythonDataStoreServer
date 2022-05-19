@@ -28,7 +28,7 @@ class AdminBlueprint(Blueprint):
 
 
 class PythonDataView(ModelView):
-    form_columns = ['id', 'dataJson', 'authTokens']
+    form_columns = ['id', 'name', 'dataJson', 'authTokens','project']
     def is_accessible(self):
         if login.current_user.is_authenticated:
             return login.current_user.is_admin
@@ -48,7 +48,7 @@ class UserView(ModelView):
         return redirect(url_for('auth.login', next=request.url))
 
 class PythonDataAuthTokensView(ModelView):
-    form_columns = ['id', 'authToken', 'tokenType', 'pythonDataId']
+    form_columns = ['id', 'authToken', 'tokenType', 'pythonData']
     def is_accessible(self):
         if login.current_user.is_authenticated:
             return login.current_user.is_admin
@@ -58,7 +58,7 @@ class PythonDataAuthTokensView(ModelView):
         return redirect(url_for('auth.login', next=request.url))
 
 class ProjectView(ModelView):
-    form_columns = ['id', 'name', 'pythonDataId', 'owner']
+    form_columns = ['id', 'name', 'pythonData', 'owner']
     def is_accessible(self):
         if login.current_user.is_authenticated:
             return login.current_user.is_admin

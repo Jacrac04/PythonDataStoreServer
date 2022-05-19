@@ -1,0 +1,28 @@
+{% extends 'layout.html' %}
+    
+{% block body %}
+    <h1>{{ project.name }}</h1>
+    <table id="pythonData" class="table table-striped">
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Value</th>
+            <th>Auth Tokens</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for data in project.pythonData %}
+            <tr>
+              <td><a href="/data/{{data.id}}">{{ data.name }}</a></td>
+              <td>{{ data.dataJson }}</td>
+              <td>
+                  {% for token in data.authTokens %} 
+                    {{token.id}}, {{token.tokenType}}<p></p>
+                  {% endfor %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+{% endblock %}
+

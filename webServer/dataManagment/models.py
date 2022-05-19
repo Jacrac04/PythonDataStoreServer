@@ -9,6 +9,7 @@ class PythonDataAuthTokens(db.Model):
     authToken = db.Column(db.String(),default=uuidGen())
     tokenType = db.Column(db.String(10))
     pythonDataId = db.Column(db.Integer, db.ForeignKey('python_data.id'))
+    pythonData = db.relationship('PythonData', back_populates='authTokens')
     
     def __init__(self, tokenType, pythonDataId):
         self.authToken = uuidGen()
@@ -19,9 +20,10 @@ class Project(db.Model):
     id = db.Column(db.Integer, primary_key=True) 
     name = db.Column(db.String(100))
     # pythonDataId = db.Column(db.Integer, db.ForeignKey('python_data.id'))
-    pythonDataId = db.relationship('PythonData', backref='Project', lazy='dynamic')
-    owner =  db.Column(db.Integer, db.ForeignKey('user.id'))
-    def __init__(self, name, pythonDataId, owner):
+    pythonData = db.relationship('PythonData', back_populates="project") # backref='Project', lazy='dynamic')
+    ownerId = db.Column(db.Integer, db.ForeignKey('user.id'))
+    owner = db.relationship('User', back_populates="projects")
+    def __init__(self, name, pythonData, owner):
         self.name = name
-        self.pythonDataId = pythonDataId
+        self.pythonData = pythonData
         self.owner = owner

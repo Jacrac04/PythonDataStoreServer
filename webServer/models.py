@@ -10,7 +10,7 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(100))
     name = db.Column(db.String(1000))
     admin = db.Column(db.Boolean, default=False)
-    projects = db.relationship('Project', backref='User', lazy='dynamic')
+    projects = db.relationship('Project', back_populates="owner")
     
     def __init__(self, email, password, name, admin=False):
         self.email = email

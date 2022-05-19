@@ -44,6 +44,9 @@ def create_app(CONFIG_TYPE=None):
     from .main import main as main_blueprint
     app.register_blueprint(main_blueprint)
     
+    from .webManagement.manageData import mangData as manageData_blueprint
+    app.register_blueprint(manageData_blueprint)
+    
     from .pythonInterface.api import api as api_blueprint
     app.register_blueprint(api_blueprint, url_prefix='/api')
 

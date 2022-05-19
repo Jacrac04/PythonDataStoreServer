@@ -1,0 +1,26 @@
+{% extends 'layout.html' %}
+    
+{% block body %}
+    <h1>{{ data.name }}</h1>
+    <table id="authTokens" class="table table-striped">
+        <thead>
+          <tr>
+            <th>Id</th>
+            <th>Type</th>
+            <th>Auth Token</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for token in data.authTokens%}
+            <tr>
+              <td>{{ token.id }}</td>
+              <td>{{ token.tokenType }}</td>
+              <td>
+                  {{ token.authToken }}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+{% endblock %}
+
