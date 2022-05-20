@@ -1,6 +1,15 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from ..models import PythonData, PythonDataAuthTokens, Project
 from flask_login import current_user
+from wtforms import Form, StringField, PasswordField, validators
+
+
+
+class CreateProjectForm(Form):
+    name = StringField('Name', [validators.Length(min=1, max=50)])
+    
+
+
 
 mangData = Blueprint('manageData', __name__, template_folder='templates', static_folder='static')
 
