@@ -1,3 +1,4 @@
+from calendar import day_abbr
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from ..models import PythonData, PythonDataAuthTokens, Project
 from flask_login import current_user
@@ -30,13 +31,22 @@ def projects():
     projects = Project.query.filter_by(ownerId=current_user.id).all()
     return render_template('manageDataHome.html', projects=projects)
     
-@mangData.route('/projects/<int:project_id>')
+@mangData.route('/projects/<int:project_id>', methods=['GET', 'POST'])
 def project(project_id):
     project = Project.query.filter_by(id=project_id).first()
     if project.owner != current_user:
         flash('You do not have permission to view this project', 'danger')
         return redirect(url_for('manageData.projects'))
-    return render_template('manageDataProject.html', project=project)
+    form = ProjectForm(request.form)
+    if request.method == 'POST' and form.validate():
+        project.name = form.name.data
+        project.description = form.description.data
+        db.session.commit()
+        flash('Project updated', 'success')
+        return redirect(url_for('manageData.project', project_id=project_id))
+    form.name.data = project.name
+    form.description.data = project.description
+    return render_template('manageDataProject.html', form=form, project=project)
 
 @mangData.route('/data/<int:data_id>', methods=['GET', 'POST'])
 def data(data_id):
@@ -46,9 +56,10 @@ def data(data_id):
         return redirect(url_for('manageData.projects'))
     form = DataForm(request.form)
     if request.method == 'POST':
+        data.name = form.name.data
         data.dataJson = form.dataJson.data
         db.session.commit()
-        flash('Data updated', 'success')
+        # flash('Data updated', 'success')
         return redirect(url_for('manageData.data', data_id=data_id))
     form.name.data = data.name
     form.dataJson.data = data.dataJson

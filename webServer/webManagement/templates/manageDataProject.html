@@ -1,8 +1,48 @@
 {% extends 'layout.html' %}
     
 {% block body %}
-    <h1>{{ project.name }}</h1>
-    <h4>Place holder for decription<p></p></h4>
+<script>
+  function toggleForm() {
+  var name = document.getElementById("Name");
+  var dataJson = document.getElementById("dataJson");
+  var form = document.getElementById("form");
+  var toggleButton1 = document.getElementById("toggleButton1");
+  var toggleButton2 = document.getElementById("toggleButton2");
+    
+
+  if (name.style.display === "none") {
+    name.style.display = "inline";
+    dataJson.style.display = "inline";
+    form.style.display = "none";
+    toggleButton1.style.display = "inline";
+    toggleButton2.style.display = "inline";
+
+  } else {
+    name.style.display = "none";
+    dataJson.style.display = "none";
+    form.style.display = "inline";
+    toggleButton1.style.display = "none";
+    toggleButton2.style.display = "none";
+
+  }
+}
+</script>
+<h1 style="display:inline" id="Name">{{ project.name }}</h1> <i style="display:inline" id="toggleButton1" class='fas fa-edit' onclick="toggleForm()"></i>
+<p id="toggleButton1"></p>
+<h4 style="display:inline" id="dataJson">{{ project.description }}</h4> <i id="toggleButton2" class='fas fa-edit' onclick="toggleForm()"></i> 
+<p id="toggleButton1"></p>
+<div>
+  {% from "includes/_formhelpers.html" import render_field2 %}
+  <form style="display:none" id="form" method="POST" action="">
+    <div class="form-group">
+      <h1 style="display:inline">{{render_field2(form.name, class_="form-control")}}</h1>
+      <p></p>
+      <h4 style="display:inline">{{render_field2(form.description, class_="form-control")}}</h4>
+    </div>
+    <p><input type="submit" class="btn btn-primary" value="Update"></p>
+  </form>
+</div>
+<p></p>
     <table id="pythonData" class="table table-striped">
         <thead>
           <tr>
