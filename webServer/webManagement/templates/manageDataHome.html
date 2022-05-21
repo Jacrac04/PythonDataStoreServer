@@ -3,24 +3,30 @@
 {% block body %}
     <h1>Your Projects</h1>
     <table id="projects" class="table table-striped">
-        <thead>
+        <thead class="thead thead-dark">
           <tr>
             <th>Project</th>
-            <th>pythonDataId</th>
+            <!-- <th>pythonDataId</th> -->
+            <th>Description</th>
+            <th>Manage Project</th>
           </tr>
         </thead>
         <tbody>
           {% for project in projects %}
             <tr>
-              <td><a href="/projects/{{ project.id }}" >{{ project.name }}</a></td>
-              <td>
+              <td>{{ project.name }}  <a href="/projects/{{ project.id }}/edit" >  <i class='fas fa-edit'></i></a></td>
+              <!-- <td>
                   {% for data in project.pythonData %} 
                     {{ data.id }}
                   {% endfor %}
-              </td>
+              </td> -->
+              <td>{{ project.description }}</td>
+              <td>
+                <a class="btn btn-primary btn" href="/projects/{{ project.id }}" role="button" id="aparatura">Manage</a>
             </tr>
           {% endfor %}
         </tbody>
       </table>
+      <a class="btn btn-primary btn-lg" href="{{ url_for('manageData.createProject') }}" role="button" id="aparatura">Add New Project</a>
 {% endblock %}
 

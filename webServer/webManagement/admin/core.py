@@ -58,7 +58,7 @@ class PythonDataAuthTokensView(ModelView):
         return redirect(url_for('auth.login', next=request.url))
 
 class ProjectView(ModelView):
-    form_columns = ['id', 'name', 'pythonData', 'owner']
+    form_columns = ['id', 'name', 'pythonData', 'owner', 'description']
     def is_accessible(self):
         if login.current_user.is_authenticated:
             return login.current_user.is_admin

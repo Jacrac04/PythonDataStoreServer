@@ -1,14 +1,13 @@
 {% extends 'layout.html' %}
     
 {% block body %}
-<h1>Create Project</h1>
+<h1>{{ keyword }} Data</h1>
 {% from "includes/_formhelpers.html" import render_field %}
 <form method="POST" action="">
   <div class="form-group">
     {{render_field(form.name, class_="form-control")}}
-    {{render_field(form.description, class_="form-control")}}
+    {{render_field(form.dataJson, rows=5, class_="form-control")}}
   </div>
   <p><input type="submit" class="btn btn-primary" value="Submit"></p>
 </form>
-<a class="btn btn-primary btn-lg" href="{{ url_for('manageData.createData', project_id=1) }}" role="button" id="aparatura">Add New Data Item</a>
 {% endblock %}

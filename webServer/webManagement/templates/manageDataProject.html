@@ -2,27 +2,33 @@
     
 {% block body %}
     <h1>{{ project.name }}</h1>
+    <h4>Place holder for decription<p></p></h4>
     <table id="pythonData" class="table table-striped">
         <thead>
           <tr>
             <th>Data</th>
             <th>Value</th>
             <th>Auth Tokens</th>
+            <th>Manage Data</th>
           </tr>
         </thead>
         <tbody>
           {% for data in project.pythonData %}
             <tr>
-              <td><a href="/data/{{data.id}}">{{ data.name }}</a></td>
+              <td>{{ data.name }}    <a href="/data/{{data.id}}/edit" >  <i class='fas fa-edit'></i></a></td>
               <td>{{ data.dataJson }}</td>
               <td>
                   {% for token in data.authTokens %} 
                     {{token.id}}, {{token.tokenType}}<p></p>
                   {% endfor %}
               </td>
+              <td>
+                <a class="btn btn-primary btn" href="/data/{{data.id}}" role="button" id="aparatura">Manage</a>
+              </td>
             </tr>
           {% endfor %}
         </tbody>
       </table>
+      <a class="btn btn-primary btn-lg" href="{{ url_for('manageData.createData', project_id=project.id) }}" role="button" id="aparatura">Add New Data</a>
 {% endblock %}
 
