@@ -2,6 +2,7 @@ from webServer import db
 from ..pythonInterface.models import PythonData
 from .models import PythonDataAuthTokens
 import json 
+from .errors import *
 
 class Data():
     
@@ -23,30 +24,30 @@ class Data():
     def _getInternals(self):
         data = PythonData.query.filter_by(id=self.id).first()
         if not data:
-            return None
+            raise DataNotFoundError('error No data found')
         authToken = PythonDataAuthTokens.query.filter_by(authToken=self.token).first()
-        if not authToken in data.authTokens.all():
-            return None
+        if not authToken in data.authTokens:
+            raise AuthTokenError('error Invalid authToken')
         self.authToken = authToken
         self.data = data
         self.modeNum = Data.modeDict[authToken.tokenType] if authToken.tokenType in Data.modeDict else 0
-        print(self.modeNum)
         
     
     def getData(self):
         if not self.modeNum in Data.readPerms:
-            return 'No permission'
+            return 'error No permission'
         return self.data.dataJson
     
     def setData(self, data):
         if not self.modeNum in Data.writePerms:
-            return 'No permission'
+            return 'error No permission'
         self.data.dataJson = data
         db.session.commit()
+        return 'success'
         
     def appendData(self, newData):
         if not self.modeNum in Data.appendPerms:
-            return 'No permission'
+            return 'error No permission'
         newData = json.loads(newData)
         data = json.loads(self.data.dataJson)
         if type(newData) != type(data):
@@ -58,3 +59,4 @@ class Data():
             data += newData
         self.data.dataJson = json.dumps(data)
         db.session.commit()
+        return 'success'

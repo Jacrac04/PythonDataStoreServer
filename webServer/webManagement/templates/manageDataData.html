@@ -48,22 +48,36 @@
             <th>Id</th>
             <th>Type</th>
             <th>Auth Token</th>
-            <th>Manage Auth Token</th>
+            <th>Delete Auth Token</th>
           </tr>
         </thead>
         <tbody>
           {% for token in data.authTokens%}
             <tr>
               <td>{{ token.id }}</td>
-              <td>{{ token.tokenType }}</td>
+              <form id="form{{ token.id }}" method="POST" action="/authToken/{{ token.id }}/update">
+              <td>{{ render_field2((forms[token.id]).tokenType, class_="form-control") }}</td>
+              </form>
+              <script>
+                let type_select{{ token.id }} = document.getElementById("select{{ token.id }}");
+                let form{{ token.id }} = document.getElementById("form{{ token.id }}");
+                type_select{{ token.id }}.onchange = function func{{token.id}}() {
+                  form{{ token.id }}.submit();
+                }
+              </script>
               <td>
                   {{ token.authToken }}
               </td>
               <td>
-                <!-- <a class="btn btn-primary btn" href="/authTokens/{{token.id}}" role="button" id="aparatura">Manage</a> -->
+                <form action="/authToken/{{ token.id }}/delete" method="post">
+                  <button type="submit" class="btn btn-primary">Delete</button>
+              </form>
             </tr>
           {% endfor %}
         </tbody>
       </table>
+      <form action="/data/{{data.id}}/new" method="post">
+        <button type="submit" class="btn btn-primary">Add Auth Token</button>
+    </form>
      {% endblock %}
 

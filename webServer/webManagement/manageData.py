@@ -2,7 +2,7 @@ from calendar import day_abbr
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from ..models import PythonData, PythonDataAuthTokens, Project
 from flask_login import current_user
-from wtforms import Form, StringField, PasswordField, validators
+from wtforms import Form, StringField, SelectField, validators
 from wtforms.widgets import TextArea
 from webServer import db
 
@@ -16,9 +16,17 @@ class DataForm(Form):
     name = StringField('Name', [validators.Length(min=1, max=50)])
     dataJson = StringField('DataJson', [validators.Length(min=1, max=10000)], widget=TextArea())
 
-# class UpdateData(Form):
-#     dataJson = StringField('DataJson', [validators.Length(min=1, max=10000)], widget=TextArea())
-    
+class AuthTokenForm(Form):
+    counter = 1
+    name = StringField('Name', [validators.Length(min=1, max=50)])
+    authToken = StringField('Token', [validators.Length(min=1, max=50)])
+    choices = ['r', 'a', 'w', 'a+']
+    tokenType = SelectField('Token Type', choices=choices, id=f"form{counter}")
+    def __init__(self, *args, **kwargs):
+        Form.__init__(self, *args, **kwargs)
+        self.tokenType.id = f"select{kwargs['id']}"
+        kwargs.pop('id')
+
     
 
 
@@ -55,15 +63,22 @@ def data(data_id):
         flash('You do not have permission to view this data', 'danger')
         return redirect(url_for('manageData.projects'))
     form = DataForm(request.form)
+    forms = dict()
+    for dataAuthToken in data.authTokens:
+        x = AuthTokenForm(request.form, id=dataAuthToken.id)
+        x.tokenType.data = dataAuthToken.tokenType
+        forms[dataAuthToken.id] = x
     if request.method == 'POST':
-        data.name = form.name.data
-        data.dataJson = form.dataJson.data
-        db.session.commit()
+        if form.submit.data:
+            data.name = form.name.data
+            data.dataJson = form.dataJson.data
+            db.session.commit()
+        
         # flash('Data updated', 'success')
         return redirect(url_for('manageData.data', data_id=data_id))
     form.name.data = data.name
     form.dataJson.data = data.dataJson
-    return render_template('manageDataData.html', form=form, data=data)
+    return render_template('manageDataData.html', form=form, forms=forms, data=data)
 
 @mangData.route('/projects/new', methods=['GET', 'POST'])
 def createProject():
@@ -144,3 +159,36 @@ def authToken(authToken_id):
     
     
 
+@mangData.route('/authToken/<int:authToken_id>/delete', methods=['POST'])
+def deleteAuthToken(authToken_id):
+    authToken = PythonDataAuthTokens.query.filter_by(id=authToken_id).first()
+    if authToken.pythonData.project.owner != current_user:
+        flash('You do not have permission to delete this authToken', 'danger')
+        return redirect(url_for('manageData.projects'))
+    db.session.delete(authToken)
+    db.session.commit()
+    flash('AuthToken deleted', 'success')
+    return redirect(request.referrer)
+
+@mangData.route('/authToken/<int:authToken_id>/update', methods=['POST'])
+def updateAuthToken(authToken_id):
+    authToken = PythonDataAuthTokens.query.filter_by(id=authToken_id).first()
+    if authToken.pythonData.project.owner != current_user:
+        flash('You do not have permission to update this authToken', 'danger')
+        return redirect(url_for('manageData.projects'))
+    authToken.tokenType = request.form['tokenType']
+    db.session.commit()
+    flash('AuthToken updated', 'success')
+    return redirect(request.referrer)
+
+@mangData.route('/data/<int:data_id>/new', methods=['POST'])
+def createAuthToken(data_id):
+    data = PythonData.query.filter_by(id=data_id).first()
+    if data.project.owner != current_user:
+        flash('You do not have permission to create an authToken for this data', 'danger')
+        return redirect(url_for('manageData.projects'))
+    authToken = PythonDataAuthTokens(pythonDataId=data.id, tokenType='r')
+    db.session.add(authToken)
+    db.session.commit()
+    flash('AuthToken created', 'success')
+    return redirect(request.referrer)

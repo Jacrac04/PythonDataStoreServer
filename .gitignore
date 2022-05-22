@@ -36,3 +36,5 @@ webServer/test.sqlite
 __pycache__/config.cpython-310.pyc
 .coverage
 webServer/webManagement/__pycache__/manageData.cpython-310.pyc
+tests/unit/__pycache__/*
+webServer/dataManagment/__pycache__/*

@@ -2,20 +2,25 @@ from flask import Blueprint, render_template, redirect, url_for, request, flash
 from webServer import db
 from ..models import PythonData, PythonDataAuthTokens
 from ..dataManagment.management import Data
+from ..dataManagment.errors import DataError, AuthTokenError
 import json
 
 api = Blueprint('api', __name__)
 
 
 
-@api.route('/get/<int:id>', methods=['GET'])
-def getData(id):
+@api.route('/old/get/<int:id>', methods=['POST'])
+def oldGetData(id):
+    authToken = json.loads(request.get_json())['authToken']
     storedData = PythonData.query.filter_by(id=id).first()
+    token = PythonDataAuthTokens.query.filter_by(authToken=authToken).first()
+    if not token in storedData.authTokens:
+        return 'error Invalid authToken'
     if not storedData:
-        return 'No Data Found'
+        return 'None'
     return storedData.dataJson
 
-@api.route('/create', methods=['post'])
+@api.route('/old/create', methods=['post'])
 def createData():
     data = request.get_json()
     newData = PythonData(dataJson=data)
@@ -24,10 +29,15 @@ def createData():
     return str(newData.id)
 
 # Update data
-@api.route('/update/<int:id>', methods=['post'])
-def updateData(id):
-    data = request.get_json()
+@api.route('/old/update/<int:id>', methods=['post'])
+def oldUpdateData(id):
+    requestData = json.loads(request.get_json())
+    data = requestData['data']
+    authToken = requestData['authToken']
     storedData = PythonData.query.filter_by(id=id).first()
+    storedAuthToken = PythonDataAuthTokens.query.filter_by(authToken=authToken).first()
+    if not storedAuthToken in storedData.authTokens:
+        return 'error Invalid authToken'
     if not storedData:
         return 'No Data Found'
     storedData.dataJson = data
@@ -35,19 +45,28 @@ def updateData(id):
     return str(storedData.id)
 
 # Test New
-@api.route('/test/<int:id>', methods=['post'])
-def test(id):
+@api.route('/get/<int:id>', methods=['post'])
+def getData(id):
     data = json.loads(request.get_json())
-    dataObj = Data(id, data['token'])
-    return dataObj.getData()
+    try:
+        dataObj = Data(id, data['token'])
+        return dataObj.getData()
+    except DataError as e:
+        return str(e)
 
 # Test Append
-@api.route('/testAppend/<int:id>', methods=['post'])
+@api.route('/append/<int:id>', methods=['post'])
 def appendData(id):
     data = json.loads(request.get_json())
     dataObj = Data(id, data['token'])
-    dataObj.appendData(data['data'])
-    return dataObj.getData()
+    return dataObj.appendData(data['data']) # dataObj.getData()
+
+@api.route('/update/<int:id>', methods=['post'])
+def updateData(id):
+    data = json.loads(request.get_json())
+    dataObj = Data(id, data['token'])
+    return dataObj.setData(data['data']) # dataObj.getData()
+           
 
 @api.route('/testCreateAuth/<int:id>', methods=['GET'])
 def createAuthToken(id):

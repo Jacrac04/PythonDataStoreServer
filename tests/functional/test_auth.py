@@ -34,7 +34,7 @@ class TestLogin():
         response = test_client.post(
             '/login', data={
                 'email': 'test@test.com',
-                'password': 'Test'
+                'password': 'test'
             })
         assert response.status_code == 302
         assert 'Set-Cookie' in response.headers
