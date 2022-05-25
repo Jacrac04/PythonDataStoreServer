@@ -28,8 +28,8 @@ def is_valid_signature(x_hub_signature, data, private_key):
 #     else:
 #         return 'Wrong event type', 400
 
-@gitUpdate.route('/update_source')
-def webhook(): 
+@gitUpdate.route('/update_source', methods=['GET', 'POST'])
+def webhook():
     if request.method != 'POST':
         return 'OK'
     else:
@@ -68,10 +68,14 @@ def webhook():
                 payload=payload))
             abort(abort_code)
 
-        if payload['ref'] != 'refs/heads/master':
+        if payload['ref'] != 'refs/heads/production':
             return json.dumps({'msg': 'Not master; ignoring'})
 
-        repo = git.Repo('/var/www/sites/mysite')
+        import sys
+        project_home = '/home/Jacrac04/PythonDataStore/PythonDataStoreServer'
+        if project_home not in sys.path:
+            sys.path = [project_home] + sys.path
+        repo = git.Repo(project_home)
         origin = repo.remotes.origin
 
         pull_info = origin.pull()
