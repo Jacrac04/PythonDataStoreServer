@@ -62,14 +62,14 @@ def webhook():
             print('Deploy signature failed: {sig}'.format(sig=x_hub_signature))
             abort(abort_code)
 
-        payload = request.get_json()
+        payload = json.loads(request.get_json())
         if payload is None:
             print('Deploy payload is empty: {payload}'.format(
                 payload=payload))
             abort(abort_code)
 
         if payload['ref'] != 'refs/heads/production':
-            return json.dumps({'msg': 'Not master; ignoring'})
+            return json.dumps({'msg': 'Not production; ignoring'})
 
         import sys
         project_home = '/home/Jacrac04/PythonDataStore/PythonDataStoreServer'
