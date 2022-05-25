@@ -62,7 +62,7 @@ def webhook():
             print('Deploy signature failed: {sig}'.format(sig=x_hub_signature))
             abort(abort_code)
 
-        payload = json.loads(request.get_json())
+        payload = request.get_json()
         if payload is None:
             print('Deploy payload is empty: {payload}'.format(
                 payload=payload))
