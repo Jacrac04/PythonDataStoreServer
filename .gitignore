@@ -38,3 +38,4 @@ __pycache__/config.cpython-310.pyc
 webServer/webManagement/__pycache__/manageData.cpython-310.pyc
 tests/unit/__pycache__/*
 webServer/dataManagment/__pycache__/*
+webServer/codeManagement/__pycache__/gitUpdate.cpython-310.pyc

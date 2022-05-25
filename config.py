@@ -53,6 +53,7 @@ class ProductionConfig(Config):
     FLASK_ENV = 'production'
     # Postgres database URL has the form postgresql://username:password@hostname/database
     SQLALCHEMY_DATABASE_URI = os.getenv('PROD_DATABASE_URl', default="sqlite:///" + os.path.join(basedir, 'prod.sqlite'))
+    W_SECRET = os.getenv('W_SECRET')
 
 
 
