@@ -30,3 +30,11 @@ def test_pythonDataAuthTokens_model():
     assert pythonDataAuthTokens1.tokenType == 'r'
     assert pythonDataAuthTokens1.authToken != pythonDataAuthTokens2.authToken
                                 
+def test_Project_model():
+    """
+    GIVEN a Project model
+    WHEN a new Project is created
+    THEN check that the projectName field is defined correctly
+    """
+    project = models.Project('test', 1, 'testDescription')
+    assert project.name == 'test'

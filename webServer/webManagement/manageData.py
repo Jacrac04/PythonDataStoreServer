@@ -83,10 +83,9 @@ def data(data_id):
         x.tokenType.data = dataAuthToken.tokenType
         forms[dataAuthToken.id] = x
     if request.method == 'POST':
-        if form.submit.data:
-            data.name = form.name.data
-            data.dataJson = form.dataJson.data
-            db.session.commit()
+        data.name = form.name.data
+        data.dataJson = form.dataJson.data
+        db.session.commit()
 
         # flash('Data updated', 'success')
         return redirect(url_for('manageData.data', data_id=data_id))
