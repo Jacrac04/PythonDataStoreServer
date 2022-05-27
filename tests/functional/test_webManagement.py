@@ -66,6 +66,6 @@ class TestManageProject:
         response = authed_client.post(
             '/projects/2', data={
                 'name': 'Test',
-                'description': 'Lorem2'
+                'description': 'Lorem ipsum dolor sit amet, consectetur adipiscing'
             })
         
