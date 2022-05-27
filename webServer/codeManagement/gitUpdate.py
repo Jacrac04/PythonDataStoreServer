@@ -73,10 +73,16 @@ def webhook():
                 payload=payload))
             abort(abort_code)
 
-        if payload['ref'] != 'refs/heads/master':
-            return json.dumps({'msg': 'Not master; ignoring'})
+        if payload['ref'] != 'refs/heads/production':
+            return json.dumps({'msg': 'Not production; ignoring'})
 
-        repo = git.Repo('~/PythonDataStore/PythonDataStoreServer/')
+
+        import sys
+        project_home = '/home/Jacrac04/PythonDataStore/PythonDataStoreServer'
+        if project_home not in sys.path:
+            sys.path = [project_home] + sys.path
+        repo = git.Repo(project_home)
+
         origin = repo.remotes.origin
 
         pull_info = origin.pull()
