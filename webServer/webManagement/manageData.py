@@ -7,14 +7,21 @@ from wtforms.widgets import TextArea
 from webServer import db
 
 
-
 class ProjectForm(Form):
     name = StringField('Name', [validators.Length(min=1, max=50)])
-    description = StringField('Description', [validators.Length(min=1, max=1000)], widget=TextArea())
-    
+    description = StringField(
+        'Description', [
+            validators.Length(
+                min=1, max=1000)], widget=TextArea())
+
+
 class DataForm(Form):
     name = StringField('Name', [validators.Length(min=1, max=50)])
-    dataJson = StringField('DataJson', [validators.Length(min=1, max=10000)], widget=TextArea())
+    dataJson = StringField(
+        'DataJson', [
+            validators.Length(
+                min=1, max=10000)], widget=TextArea())
+
 
 class AuthTokenForm(Form):
     counter = 1
@@ -22,23 +29,26 @@ class AuthTokenForm(Form):
     authToken = StringField('Token', [validators.Length(min=1, max=50)])
     choices = ['r', 'a', 'w', 'a+']
     tokenType = SelectField('Token Type', choices=choices, id=f"form{counter}")
+
     def __init__(self, *args, **kwargs):
         Form.__init__(self, *args, **kwargs)
         self.tokenType.id = f"select{kwargs['id']}"
         kwargs.pop('id')
 
-    
 
-
-
-mangData = Blueprint('manageData', __name__, template_folder='templates', static_folder='static')
+mangData = Blueprint(
+    'manageData',
+    __name__,
+    template_folder='templates',
+    static_folder='static')
 
 
 @mangData.route('/projects')
 def projects():
     projects = Project.query.filter_by(ownerId=current_user.id).all()
     return render_template('manageDataHome.html', projects=projects)
-    
+
+
 @mangData.route('/projects/<int:project_id>', methods=['GET', 'POST'])
 def project(project_id):
     project = Project.query.filter_by(id=project_id).first()
@@ -54,7 +64,11 @@ def project(project_id):
         return redirect(url_for('manageData.project', project_id=project_id))
     form.name.data = project.name
     form.description.data = project.description
-    return render_template('manageDataProject.html', form=form, project=project)
+    return render_template(
+        'manageDataProject.html',
+        form=form,
+        project=project)
+
 
 @mangData.route('/data/<int:data_id>', methods=['GET', 'POST'])
 def data(data_id):
@@ -69,16 +83,20 @@ def data(data_id):
         x.tokenType.data = dataAuthToken.tokenType
         forms[dataAuthToken.id] = x
     if request.method == 'POST':
-        if form.submit.data:
-            data.name = form.name.data
-            data.dataJson = form.dataJson.data
-            db.session.commit()
-        
+        data.name = form.name.data
+        data.dataJson = form.dataJson.data
+        db.session.commit()
+
         # flash('Data updated', 'success')
         return redirect(url_for('manageData.data', data_id=data_id))
     form.name.data = data.name
     form.dataJson.data = data.dataJson
-    return render_template('manageDataData.html', form=form, forms=forms, data=data)
+    return render_template(
+        'manageDataData.html',
+        form=form,
+        forms=forms,
+        data=data)
+
 
 @mangData.route('/projects/new', methods=['GET', 'POST'])
 def createProject():
@@ -86,12 +104,16 @@ def createProject():
     if request.method == 'POST' and form.validate():
         name = form.name.data
         description = form.description.data
-        project = Project(name=name, ownerId=current_user.id, description=description)
+        project = Project(
+            name=name,
+            ownerId=current_user.id,
+            description=description)
         db.session.add(project)
         db.session.commit()
         flash('Project created', 'success')
         return redirect(url_for('manageData.projects'))
     return render_template('editDataProject.html', form=form, keyword='Create')
+
 
 @mangData.route('/projects/<int:project_id>/edit', methods=['GET', 'POST'])
 def editProject(project_id):
@@ -99,7 +121,7 @@ def editProject(project_id):
     if project.owner != current_user:
         flash('You do not have permission to edit this project', 'danger')
         return redirect(url_for('manageData.projects'))
-    form = ProjectForm(request.form)  
+    form = ProjectForm(request.form)
     if request.method == 'POST' and form.validate():
         name = form.name.data
         description = form.description.data
@@ -111,6 +133,7 @@ def editProject(project_id):
     form.name.data = project.name
     form.description.data = project.description
     return render_template('editDataProject.html', form=form, keyword='Edit')
+
 
 @mangData.route('/projects/<int:project_id>/newData', methods=['GET', 'POST'])
 def createData(project_id):
@@ -128,7 +151,8 @@ def createData(project_id):
         flash('Data created', 'success')
         return redirect(url_for('manageData.data', data_id=data.id))
     return render_template('editDataData.html', form=form, keyword='Create')
-    
+
+
 @mangData.route('/data/<int:data_id>/edit', methods=['GET', 'POST'])
 def editData(data_id):
     data = PythonData.query.filter_by(id=data_id).first()
@@ -143,12 +167,15 @@ def editData(data_id):
         data.dataJson = dataJson
         db.session.commit()
         flash('Data edited', 'success')
-        return redirect(url_for('manageData.project', project_id=data.projectId))
+        return redirect(
+            url_for(
+                'manageData.project',
+                project_id=data.projectId))
     form.name.data = data.name
     form.dataJson.data = data.dataJson
     return render_template('editDataData.html', form=form, keyword='Edit')
-        
-    
+
+
 @mangData.route('/authToken/<int:authToken_id>', methods=['GET', 'POST'])
 def authToken(authToken_id):
     authToken = PythonDataAuthTokens.query.filter_by(id=authToken_id).first()
@@ -156,8 +183,7 @@ def authToken(authToken_id):
         flash('You do not have permission to view this authToken', 'danger')
         return redirect(url_for('manageData.projects'))
     return render_template('manageDataAuthToken.html', authToken=authToken)
-    
-    
+
 
 @mangData.route('/authToken/<int:authToken_id>/delete', methods=['POST'])
 def deleteAuthToken(authToken_id):
@@ -170,6 +196,7 @@ def deleteAuthToken(authToken_id):
     flash('AuthToken deleted', 'success')
     return redirect(request.referrer)
 
+
 @mangData.route('/authToken/<int:authToken_id>/update', methods=['POST'])
 def updateAuthToken(authToken_id):
     authToken = PythonDataAuthTokens.query.filter_by(id=authToken_id).first()
@@ -181,11 +208,14 @@ def updateAuthToken(authToken_id):
     flash('AuthToken updated', 'success')
     return redirect(request.referrer)
 
+
 @mangData.route('/data/<int:data_id>/new', methods=['POST'])
 def createAuthToken(data_id):
     data = PythonData.query.filter_by(id=data_id).first()
     if data.project.owner != current_user:
-        flash('You do not have permission to create an authToken for this data', 'danger')
+        flash(
+            'You do not have permission to create an authToken for this data',
+            'danger')
         return redirect(url_for('manageData.projects'))
     authToken = PythonDataAuthTokens(pythonDataId=data.id, tokenType='r')
     db.session.add(authToken)

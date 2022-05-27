@@ -39,3 +39,4 @@ webServer/webManagement/__pycache__/manageData.cpython-310.pyc
 tests/unit/__pycache__/*
 webServer/dataManagment/__pycache__/*
 webServer/codeManagement/__pycache__/gitUpdate.cpython-310.pyc
+tests/functional/__pycache__/test_webManagement.cpython-310-pytest-7.1.2.pyc

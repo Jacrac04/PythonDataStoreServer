@@ -6,6 +6,7 @@ import json
 
 gitUpdate = Blueprint('gitUpdate', __name__)
 
+
 def is_valid_signature(x_hub_signature, data, private_key):
     # x_hub_signature and data are from the webhook payload
     # private key is your webhook secret
@@ -27,6 +28,7 @@ def is_valid_signature(x_hub_signature, data, private_key):
 #         return 'Updated PythonAnywhere successfully', 200
 #     else:
 #         return 'Wrong event type', 400
+
 
 @gitUpdate.route('/update_source', methods=['GET', 'POST'])
 def webhook():
@@ -58,7 +60,10 @@ def webhook():
         x_hub_signature = request.headers.get('X-Hub-Signature')
         # webhook content type should be application/json for request.data to have the payload
         # request.data is empty in case of x-www-form-urlencoded
-        if not is_valid_signature(x_hub_signature, request.data, current_app.config['W_SECRET']):
+        if not is_valid_signature(
+                x_hub_signature,
+                request.data,
+                current_app.config['W_SECRET']):
             print('Deploy signature failed: {sig}'.format(sig=x_hub_signature))
             abort(abort_code)
 
@@ -71,21 +76,26 @@ def webhook():
         if payload['ref'] != 'refs/heads/production':
             return json.dumps({'msg': 'Not production; ignoring'})
 
+
         import sys
         project_home = '/home/Jacrac04/PythonDataStore/PythonDataStoreServer'
         if project_home not in sys.path:
             sys.path = [project_home] + sys.path
         repo = git.Repo(project_home)
+
         origin = repo.remotes.origin
 
         pull_info = origin.pull()
 
         if len(pull_info) == 0:
-            return json.dumps({'msg': "Didn't pull any information from remote!"})
+            return json.dumps(
+                {'msg': "Didn't pull any information from remote!"})
         if pull_info[0].flags > 128:
-            return json.dumps({'msg': "Didn't pull any information from remote!"})
+            return json.dumps(
+                {'msg': "Didn't pull any information from remote!"})
 
         commit_hash = pull_info[0].commit.hexsha
         build_commit = f'build_commit = "{commit_hash}"'
         print(f'{build_commit}')
-        return 'Updated PythonAnywhere server to commit {commit}'.format(commit=commit_hash)
+        return 'Updated PythonAnywhere server to commit {commit}'.format(
+            commit=commit_hash)
