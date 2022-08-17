@@ -55,5 +55,8 @@ def create_app(CONFIG_TYPE=None):
 
     from .codeManagement.gitUpdate import gitUpdate as gitUpdate_blueprint
     app.register_blueprint(gitUpdate_blueprint, url_prefix='/gitUpdate')
+    
+    from .mandelbrot.mandelbrotPages import mandelbrot as mandelbrot_blueprint
+    app.register_blueprint(mandelbrot_blueprint, url_prefix='/mandelbrot')
 
     return app
