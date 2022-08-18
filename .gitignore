@@ -41,3 +41,5 @@ webServer/dataManagment/__pycache__/*
 webServer/codeManagement/__pycache__/gitUpdate.cpython-310.pyc
 tests/functional/__pycache__/test_webManagement.cpython-310-pytest-7.1.2.pyc
 webServer/webManagement/Untitled-1.sql
+webServer/mandelbrot/__pycache__/mandelbrotPages.cpython-310.pyc
+webServer/mandelbrot/__pycache__/*

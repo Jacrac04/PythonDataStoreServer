@@ -6,8 +6,11 @@ mandelbrot = Blueprint('mandelbrot', __name__,
                             static_folder='static')
 
 
-@mandelbrot.route('/')
-def index():
+@mandelbrot.route('/python')
+def pythonMandelbrot():
     return render_template('mandelbrotPython.html')
 
+@mandelbrot.route('/js')
+def jsMandelbrot():
+    return render_template('mandelbrotJs.html')
 

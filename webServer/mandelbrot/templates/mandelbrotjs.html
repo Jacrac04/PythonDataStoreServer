@@ -1,0 +1,198 @@
+{% extends 'layout.html' %}
+
+{% block head %}
+  {{ super() }}
+  <script src="https://pagecdn.io/lib/mathjs/11.0.1/math.js" type="text/javascript"></script>
+{% endblock %}
+
+
+{% block body %}
+
+<h2 id="busy" name="busy" style="display: none;"><i>(Probably)</i> Doing Something, Please Wait</h2>
+<canvas id="myCanvas" width="1" height="1"></canvas>
+        <script type="text/javascript">
+
+        function notInf(c, ittr_num) {
+            var z = 0;
+            for (var _ = 0; _ < ittr_num; _++) {
+                z = math.add((math.multiply(z,z)),  c);
+            }
+            return Math.abs(z) <= 2;
+        }
+        
+        class MandelbrotSet {
+            constructor(max_ittr, escape_radius) {
+                this.max_ittr = max_ittr;
+                this.escape_radius = escape_radius;
+            }
+            contains(c) {
+                return this.stability(c) == 1;
+            }
+            stability(c) {
+                let a = this.point_where_dips(c) / this.max_ittr
+                // console.log(a);
+                return a //this.point_where_dips(c) / this.max_ittr;
+            }
+            point_where_dips(c) {
+                let z = 0;
+                let i = 0;
+                for (let ittr = 0; ittr < this.max_ittr; ittr++) {
+                    z = math.add((math.multiply(z,z)),  c);
+                    // console.log(this.abs(z));
+                    if (this.abs(z) >= this.escape_radius) {
+                        return ittr;
+                    }
+                    i = ittr;
+                }
+                // console.log(i);
+                return i;
+            }
+            abs(c) {
+                return math.sqrt((math.re(c)) * (math.re(c)) + (math.im(c)) * (math.im(c)));
+            }
+        }
+        class Viewport {
+            constructor(canvas, center, width) {
+                this.image = canvas;
+                this.context = canvas.getContext("2d");
+                this.center = center;
+                this.width = width;
+            }
+
+            get height() {
+                // console.log(this.image.height, this.scale);
+                return this.scale * this.image.height;
+            }
+            get offset() {
+                return math.multiply(math.add(this.center, math.complex(-this.width, this.height)), 0.5);
+            }
+            get scale() {
+                // console.log(this.image.width);
+                return this.width / this.image.width;
+            }
+
+            *[Symbol.iterator]() {
+                for (let y = 0; y < this.image.height; y++) {
+                    for (let x = 0; x < this.image.width; x++) {
+                        yield new Pixel(this, x, y);
+                    }
+                }
+            }
+        }
+        class Pixel {
+            constructor(viewport, x, y) {
+                this.viewport = viewport;
+                this.x = x;
+                this.y = y;
+            }
+            get color() {
+                return this.viewport.image.getpixel((this.x, this.y));
+            }
+            set color(value) {
+                let g = value[1];
+                let b = value[2];
+                let r = value[0];
+                // console.log(r, g, b);
+                this.viewport.context.fillStyle = "rgba("+r+","+g+","+b+","+(200/255)+")";
+                this.viewport.context.fillRect( this.x, this.y, 2, 2 );
+                
+            }
+            __complex__() {
+                return (
+                    math.add(math.multiply(math.complex(this.x, -this.y), this.viewport.scale), this.viewport.offset));
+                
+            }
+        }
+
+        function stability(self, c) {
+            return self.point_where_dips(c) / self.max_ittr;
+        }
+        function point_where_dips(self, c) {
+            var z = 0;
+            for (var ittr = 0; ittr < self.max_ittr; ittr++) {
+                z = math.add((math.multiply(z,z)),  c);
+                if (Math.abs(z) >= 2) {
+                    return ittr;
+                }
+            }
+            // console.log(ittr);
+            return ittr;
+        }
+
+        function toggleBusy() {
+            var busy = document.getElementById("busy");
+            console.log(busy.style.display);
+            busy.style.display = busy.style.display == "none" ? "block" : "none";
+            console.log(busy.style.display);
+        }
+        
+        function createSet() {
+            toggleBusy();
+            setTimeout(function(){
+
+                const form = document.getElementById("form");
+                const max_ittr = form.elements["max_ittr"].value;
+                const escape_radius = form.elements["escape_radius"].value;
+                const center_re = form.elements["center_re"].value;
+                const center_im = form.elements["center_im"].value;
+                const width = form.elements["width"].value;
+                const height = form.elements["height"].value;
+                const scale = form.elements["scale"].value;
+
+                mandelbrot_set = new MandelbrotSet(max_ittr, escape_radius);     
+                const canvas = document.getElementById("myCanvas");
+                canvas.width = width;
+                canvas.height = height;
+                viewport_obj = new Viewport(canvas, math.complex(center_re, center_im), scale);
+                // console.log(viewport_obj.scale);
+                for (var pixel of viewport_obj) {
+                    var c = pixel.__complex__();
+                    // console.log(c);
+                    let stability = mandelbrot_set.stability(c);
+                    // if (mandelbrot_set.contains(c)) {
+                    //     pixel.color = [0, 0, 0];
+                    // } else {
+                    //     pixel.color = [255, 255, 255];
+                    // }
+                    pixel.color = [stability * 255, stability * 255, stability * 255];
+                }
+                toggleBusy();
+            } , 10);
+            
+        }
+        // createSet();
+        </script>
+
+    <form id="form" name="form" action="javascript:createSet()">
+        <div class="form-group">
+            <label for="max_ittr">Max Iterations:</label>
+            <input type="text" class="form-control" id="max_ittr" name="max_ittr" value="20"><br>
+        </div>
+        <div class="form-group">
+            <label for="escape_radius">Escape Radius:</label>
+            <input type="text" class="form-control" id="escape_radius" name="escape_radius" value="2"><br>
+        </div>
+        <div class="form-group">
+            <label for="center_re">Center Real Component (Units):</label>
+            <input type="text" class="form-control" id="lname" name="center_re" value="-0.5"><br>
+        </div>
+        <div class="form-group">
+            <label for="center_im">Center Imaginary (i Units):</label>
+            <input type="text" class="form-control" id="center_im" name="center_im" value="0">
+        </div>
+        <div class="form-group">
+            <label for="width">Width:</label>
+            <input type="text" class="form-control" id="width" name="width" value="800"><br>
+        </div>
+        <div class="form-group">
+            <label for="height">Height:</label>
+            <input type="text" class="form-control" id="height" name="height" value="500"><br>
+        </div>
+        <div class="form-group">
+            <label for="scale">Scale:</label>
+            <input type="text" class="form-control" id="scale" name="scale" value="3"><br>
+        </div>
+        <button type="submit" class="btn btn-primary">Create</button>
+    </form>
+
+{% endblock %}
