@@ -8,6 +8,6 @@ mandelbrot = Blueprint('mandelbrot', __name__,
 
 @mandelbrot.route('/')
 def index():
-    return render_template('mandelbrot.html')
+    return render_template('mandelbrotPython.html')
 
 
