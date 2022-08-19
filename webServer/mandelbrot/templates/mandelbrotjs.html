@@ -3,122 +3,80 @@
 {% block head %}
   {{ super() }}
   <script src="https://pagecdn.io/lib/mathjs/11.0.1/math.js" type="text/javascript"></script>
+  <script src="https://unpkg.com/everpolate/everpolate.browserified.min.js"></script>
 {% endblock %}
 
 
 {% block body %}
+<div class="jumbotron">
+    <h2 id="busy" name="busy" style="display: none;"><i>(Probably)</i> Doing Something, Please Wait</h2>
+    <p align="middle"><canvas id="myCanvas" width="1" height="1"></canvas></p>
+    <script src="{{url_for('mandelbrot.static', filename='mandelbrot.js')}}"></script>
+    <style>
+        /* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
 
-<h2 id="busy" name="busy" style="display: none;"><i>(Probably)</i> Doing Something, Please Wait</h2>
-<canvas id="myCanvas" width="1" height="1"></canvas>
-        <script type="text/javascript">
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
 
-        function notInf(c, ittr_num) {
-            var z = 0;
-            for (var _ = 0; _ < ittr_num; _++) {
-                z = math.add((math.multiply(z,z)),  c);
-            }
-            return Math.abs(z) <= 2;
-        }
-        
-        class MandelbrotSet {
-            constructor(max_ittr, escape_radius) {
-                this.max_ittr = max_ittr;
-                this.escape_radius = escape_radius;
-            }
-            contains(c) {
-                return this.stability(c) == 1;
-            }
-            stability(c) {
-                let a = this.point_where_dips(c) / this.max_ittr
-                // console.log(a);
-                return a //this.point_where_dips(c) / this.max_ittr;
-            }
-            point_where_dips(c) {
-                let z = 0;
-                let i = 0;
-                for (let ittr = 0; ittr < this.max_ittr; ittr++) {
-                    z = math.add((math.multiply(z,z)),  c);
-                    // console.log(this.abs(z));
-                    if (this.abs(z) >= this.escape_radius) {
-                        return ittr;
-                    }
-                    i = ittr;
-                }
-                // console.log(i);
-                return i;
-            }
-            abs(c) {
-                return math.sqrt((math.re(c)) * (math.re(c)) + (math.im(c)) * (math.im(c)));
-            }
-        }
-        class Viewport {
-            constructor(canvas, center, width) {
-                this.image = canvas;
-                this.context = canvas.getContext("2d");
-                this.center = center;
-                this.width = width;
-            }
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
 
-            get height() {
-                // console.log(this.image.height, this.scale);
-                return this.scale * this.image.height;
-            }
-            get offset() {
-                return math.multiply(math.add(this.center, math.complex(-this.width, this.height)), 0.5);
-            }
-            get scale() {
-                // console.log(this.image.width);
-                return this.width / this.image.width;
-            }
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
 
-            *[Symbol.iterator]() {
-                for (let y = 0; y < this.image.height; y++) {
-                    for (let x = 0; x < this.image.width; x++) {
-                        yield new Pixel(this, x, y);
-                    }
-                }
-            }
-        }
-        class Pixel {
-            constructor(viewport, x, y) {
-                this.viewport = viewport;
-                this.x = x;
-                this.y = y;
-            }
-            get color() {
-                return this.viewport.image.getpixel((this.x, this.y));
-            }
-            set color(value) {
-                let g = value[1];
-                let b = value[2];
-                let r = value[0];
-                // console.log(r, g, b);
-                this.viewport.context.fillStyle = "rgba("+r+","+g+","+b+","+(200/255)+")";
-                this.viewport.context.fillRect( this.x, this.y, 2, 2 );
-                
-            }
-            __complex__() {
-                return (
-                    math.add(math.multiply(math.complex(this.x, -this.y), this.viewport.scale), this.viewport.offset));
-                
-            }
-        }
+input:checked + .slider {
+  background-color: #2196F3;
+}
 
-        function stability(self, c) {
-            return self.point_where_dips(c) / self.max_ittr;
-        }
-        function point_where_dips(self, c) {
-            var z = 0;
-            for (var ittr = 0; ittr < self.max_ittr; ittr++) {
-                z = math.add((math.multiply(z,z)),  c);
-                if (Math.abs(z) >= 2) {
-                    return ittr;
-                }
-            }
-            // console.log(ittr);
-            return ittr;
-        }
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
 
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+    </style>
+    <script type="text/javascript">
         function toggleBusy() {
             var busy = document.getElementById("busy");
             console.log(busy.style.display);
@@ -129,6 +87,14 @@
         function createSet() {
             toggleBusy();
             setTimeout(function(){
+                black = [0, 0, 0]
+                blue = [0, 0, 1]
+                maroon = [0.5, 0, 0]
+                navy = [0, 0, 0.5]
+                red = [1, 0, 0]
+                grad = createGradient([getColours()], "linear", 256);
+
+                getColours()
 
                 const form = document.getElementById("form");
                 const max_ittr = form.elements["max_ittr"].value;
@@ -144,23 +110,64 @@
                 canvas.width = width;
                 canvas.height = height;
                 viewport_obj = new Viewport(canvas, math.complex(center_re, center_im), scale);
-                // console.log(viewport_obj.scale);
+
                 for (var pixel of viewport_obj) {
                     var c = pixel.__complex__();
-                    // console.log(c);
+
                     let stability = mandelbrot_set.stability(c);
-                    // if (mandelbrot_set.contains(c)) {
-                    //     pixel.color = [0, 0, 0];
-                    // } else {
-                    //     pixel.color = [255, 255, 255];
-                    // }
-                    pixel.color = [stability * 255, stability * 255, stability * 255];
+                    let index = Math.round(Math.min(stability * grad.length, grad.length - 1))
+                    pixel.color = grad[index % grad.length];
                 }
                 toggleBusy();
             } , 10);
             
         }
-        // createSet();
+
+        function createGradient(colours, interpolation="linear", numOfColours=256){
+            let X = [];
+            let ammountOfColours = colours.length;
+            for (var i=0; i<ammountOfColours; i++){
+                X[i] = i/(ammountOfColours-1)
+            }
+            let Y = [[], [], []];
+            for (var i=0; i<3; i++){
+                for (var j = 0; j<ammountOfColours; j++){
+                    Y[i][j] = colours[j][i];
+                }
+            }
+            let nums = [];
+            for (var i=0; i<numOfColours; i++){
+                nums[i] = i * (1/numOfColours);
+            }
+            let grad = [[], [], []];
+            grad[0] = everpolate.linear(nums, X, Y[0]);
+            grad[1] = everpolate.linear(nums, X, Y[1]);
+            grad[2] = everpolate.linear(nums, X, Y[2]);
+            let gradient = [];
+            for (var i=0; i<grad[0].length; i++){
+                gradient[i] = [grad[0][i]*256, grad[1][i]*256, grad[2][i]*256];
+            }
+            return gradient;
+
+        }
+        function getColours(){
+            let colours = [];
+            const colContainer = document.getElementById("colours");
+            const cols = colContainer.children;
+            for (var i=0; i<cols.length; i++){
+                color = cols[i].value
+                const r = parseInt(color.substr(1,2), 16)
+                const g = parseInt(color.substr(3,2), 16)
+                const b = parseInt(color.substr(5,2), 16)
+                colours[i] = [r/256, g/256, b/256];
+
+            }
+            console.log(colours);
+
+        }
+        
+        
+        // createSet(grad);
         </script>
 
     <form id="form" name="form" action="javascript:createSet()">
@@ -192,6 +199,31 @@
             <label for="scale">Scale:</label>
             <input type="text" class="form-control" id="scale" name="scale" value="3"><br>
         </div>
+        <div class="form-group">
+            <label for="sw">Colour:</label><p></p>
+            <label id="sw" class="switch">
+                <input type="checkbox">
+                <span class="slider round"></span>
+              </label>
+        </div>
+        <script>
+            function addColourBtn() {
+
+                let btn = document.createElement("input");
+                btn.type = "color";
+
+            // Append the "li" node to the list:
+            document.getElementById("colours").appendChild(btn);
+            }
+            function deleteColourBtn() {
+                let colContainer = document.getElementById("colours");
+                let cols = colContainer.children;
+                if (cols.length > 1){
+                    colContainer.removeChild(cols[cols.length-1]);
+                }
+            }
+        </script>
+        <div id="colours" name="colours"><input type="color"></div><button type="button" onclick="addColourBtn()" class="btn btn-secondary">Add Colour</button><button type="button" onclick="deleteColourBtn()" class="btn btn-secondary">Delete Colour</button>  <p> </p>
         <button type="submit" class="btn btn-primary">Create</button>
     </form>
 
