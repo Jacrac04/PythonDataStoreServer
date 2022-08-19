@@ -1,0 +1,34 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<div>
+    <div class="jumbotron text-center">
+        <div style="display: flex; align-items: center; margin-left: 0%; margin-bottom: 5%; margin-right: 0%;">
+            <div style="width: 40%; float:left;">
+                <h2 style="vertical-align: middle; font-size: 3em">Mandelbrot Set In JS</h2>
+                <h3><a href="/js">Try it Out For Yourself</a></h3>
+            </div>
+            <div style="width: 70%; float:right;;">
+                <img src="{{url_for('mandelbrot.static', filename='jsmandelbrotset6.png')}}" width="90%" height="90%" align="centre" /><p></p>
+            </div>
+        </div>
+        <p>Javascript is not one of my main languages so this is not that efficient or good. It allows for simple black and white rendering or colour rendering where a gradient can be created by the user. When it is being run the page becomes unresponsive and the browser may prompt you to close it - don't! Once the image is generated it can be saved locally by left clicking on it and clicking "save image as". </p>
+        <p>The code for the Mandelbrot set is annotated and can be found here. The code for the colour gradient generator can be found here.</p>
+    </div>
+        <!-- <h2>A Simple Black And White MandelBrot Set</h2>
+        <img src="{{url_for('mandelbrot.static', filename='mandelbrot.jpg')}}" align="centre" /><p></p> -->
+        <div class="jumbotron text-center">
+            <div style="display: flex; align-items: center; margin-left: 0%; margin-bottom: 5%; margin-right: 0%;">
+                <div style="width: 70%; float:left;">
+                    <img src="{{url_for('mandelbrot.static', filename='jsmandelbrotset2.png')}}" width="90%" height="90%" align="centre" /><p></p>
+                </div>
+                <div style="width: 40%; float:right;">
+                    <h2 style="vertical-align: middle; font-size: 3em">Mandelbrot Set In Python</h2>
+                    <h3><a href="/python">Explore It Here</a></h3>
+                </div>
+            </div>
+            <p>Python is my main programming language and what I'm most fluent in. The code, however, is not annotated and can't be run in the browser, it either needs to be run locally or on a site like <a href="repl.it">repl.it</a> or <a href="pythonanywhere.com">Python Anywhere</a></p>
+        </div>   
+</div>
+
+{% endblock %}

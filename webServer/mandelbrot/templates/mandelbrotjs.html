@@ -9,8 +9,8 @@
 
 {% block body %}
 <div class="jumbotron">
+    <p align="middle"><canvas id="myCanvas" width="1" height="1"></canvas></p>    
     <h2 id="busy" name="busy" style="display: none;"><i>(Probably)</i> Doing Something, Please Wait</h2>
-    <p align="middle"><canvas id="myCanvas" width="1" height="1"></canvas></p>
     <script src="{{url_for('mandelbrot.static', filename='mandelbrot.js')}}"></script>
     <style>
         /* The switch - the box around the slider */
@@ -79,23 +79,12 @@ input:checked + .slider:before {
     <script type="text/javascript">
         function toggleBusy() {
             var busy = document.getElementById("busy");
-            console.log(busy.style.display);
             busy.style.display = busy.style.display == "none" ? "block" : "none";
-            console.log(busy.style.display);
         }
         
         function createSet() {
             toggleBusy();
             setTimeout(function(){
-                black = [0, 0, 0]
-                blue = [0, 0, 1]
-                maroon = [0.5, 0, 0]
-                navy = [0, 0, 0.5]
-                red = [1, 0, 0]
-                grad = createGradient([getColours()], "linear", 256);
-
-                getColours()
-
                 const form = document.getElementById("form");
                 const max_ittr = form.elements["max_ittr"].value;
                 const escape_radius = form.elements["escape_radius"].value;
@@ -105,18 +94,35 @@ input:checked + .slider:before {
                 const height = form.elements["height"].value;
                 const scale = form.elements["scale"].value;
 
+                const useColour = form.elements["swColour"].checked;
+
                 mandelbrot_set = new MandelbrotSet(max_ittr, escape_radius);     
                 const canvas = document.getElementById("myCanvas");
                 canvas.width = width;
                 canvas.height = height;
                 viewport_obj = new Viewport(canvas, math.complex(center_re, center_im), scale);
 
-                for (var pixel of viewport_obj) {
-                    var c = pixel.__complex__();
+                if (useColour){
+                    let colours = getColours();
+                    grad = createGradient(colours, "linear", 256);
+                    for (var pixel of viewport_obj) {
+                        var c = pixel.__complex__();
 
-                    let stability = mandelbrot_set.stability(c);
-                    let index = Math.round(Math.min(stability * grad.length, grad.length - 1))
-                    pixel.color = grad[index % grad.length];
+                        let stability = mandelbrot_set.stability(c);
+                        let index = Math.round(Math.min(stability * grad.length, grad.length - 1))
+                        pixel.color = grad[index % grad.length];
+                    }
+                } else {
+                    for (var pixel of viewport_obj) {
+                        var c = pixel.__complex__();
+                        let stability = mandelbrot_set.stability(c);
+                        stability = 1 - stability;
+                        // if (mandelbrot_set.contains(c)) {
+                        //     pixel.color = [0, 0, 0];
+                        // } else {
+                        //     pixel.color = [255, 255, 255];
+                        pixel.color = [stability * 255, stability * 255, stability * 255];
+                    }
                 }
                 toggleBusy();
             } , 10);
@@ -160,14 +166,12 @@ input:checked + .slider:before {
                 const g = parseInt(color.substr(3,2), 16)
                 const b = parseInt(color.substr(5,2), 16)
                 colours[i] = [r/256, g/256, b/256];
-
             }
-            console.log(colours);
+            return colours;
 
         }
         
         
-        // createSet(grad);
         </script>
 
     <form id="form" name="form" action="javascript:createSet()">
@@ -196,24 +200,31 @@ input:checked + .slider:before {
             <input type="text" class="form-control" id="height" name="height" value="500"><br>
         </div>
         <div class="form-group">
-            <label for="scale">Scale:</label>
+            <label for="scale">Width of Set:</label>
             <input type="text" class="form-control" id="scale" name="scale" value="3"><br>
         </div>
         <div class="form-group">
             <label for="sw">Colour:</label><p></p>
             <label id="sw" class="switch">
-                <input type="checkbox">
+                <input id="swColour" name="swColour" type="checkbox" onchange="toggleColour()">
                 <span class="slider round"></span>
               </label>
         </div>
         <script>
+            function toggleColour(){
+                var sw = document.getElementById("swColour");
+                var colContainer = document.getElementById("colourStuff");
+                if (sw.checked){
+                    colContainer.style.display = "block";
+                }
+                else{
+                    colContainer.style.display = "none";
+                }
+            }
             function addColourBtn() {
-
                 let btn = document.createElement("input");
                 btn.type = "color";
-
-            // Append the "li" node to the list:
-            document.getElementById("colours").appendChild(btn);
+                document.getElementById("colours").appendChild(btn);
             }
             function deleteColourBtn() {
                 let colContainer = document.getElementById("colours");
@@ -223,8 +234,20 @@ input:checked + .slider:before {
                 }
             }
         </script>
-        <div id="colours" name="colours"><input type="color"></div><button type="button" onclick="addColourBtn()" class="btn btn-secondary">Add Colour</button><button type="button" onclick="deleteColourBtn()" class="btn btn-secondary">Delete Colour</button>  <p> </p>
-        <button type="submit" class="btn btn-primary">Create</button>
+        <div id="colourStuff" name="colourStuff" style="display: none;">
+            <div id="colours" name="colours">
+                <input type="color" value="#000000">
+                <input type="color" value="#000080">
+                <input type="color" value="#0000FF">
+                <input type="color" value="#800000">
+                <input type="color" value="#ff0000">
+                <input type="color" value="#000000">
+            </div>
+            <button type="button" onclick="addColourBtn()" class="btn btn-secondary">Add Colour</button>
+            <button type="button" onclick="deleteColourBtn()" class="btn btn-secondary">Delete Colour</button> 
+        </div>
+        <p> </p>
+        <button type="submit" class="btn btn-primary" action="javascript:createSet()">Create</button>
     </form>
 
 {% endblock %}

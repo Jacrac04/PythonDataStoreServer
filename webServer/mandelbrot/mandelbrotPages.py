@@ -14,3 +14,6 @@ def pythonMandelbrot():
 def jsMandelbrot():
     return render_template('mandelbrotJs.html')
 
+@mandelbrot.route('/')
+def index():
+    return render_template('mandelbrot.html')
