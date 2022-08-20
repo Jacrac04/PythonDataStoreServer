@@ -71,12 +71,12 @@ class MandelbrotSet {
     }
 }
 
-/* Class Viewport 
+/* Class ImageMgr 
 This is used to manage the actual drawing and representation of the Mandelbrot set*/
-class Viewport {
+class ImageMgr {
     constructor(canvas, center, width) {
-        /* Constructor for the Viewport class.
-        Takes the canvas element and the center and width of the viewport as the arguments. */
+        /* Constructor for the ImageMgr class.
+        Takes the canvas element and the center and width of the imageMgr as the arguments. */
         this.image = canvas;
         this.context = canvas.getContext("2d");
         this.center = center;
@@ -84,24 +84,24 @@ class Viewport {
     }
 
     get height() {
-        /* Function to get the height of the viewport.
-        Returns the height of the viewport. */
+        /* Function to get the height of the imageMgr.
+        Returns the height of the imageMgr. */
         return this.scale * this.image.height;
     }
     get offset() {
-        /* Function to get the offset of the viewport.
-        Returns the offset of the viewport. */
+        /* Function to get the offset of the imageMgr.
+        Returns the offset of the imageMgr. */
         return math.multiply(math.add(this.center, math.complex(-this.width, this.height)), 0.5); // (center + (-width, height)) * 0.5
     }
     get scale() {
-        /* Function to get the scale of the viewport.
-        Returns the scale of the viewport. */
+        /* Function to get the scale of the imageMgr.
+        Returns the scale of the imageMgr. */
         return this.width / this.image.width;
     }
 
     *[Symbol.iterator]() {
-        /* Function to get an iterator for the viewport.
-        Returns an iterator for the viewport made up of the Pixels in the viewport. */
+        /* Function to get an iterator for the imageMgr.
+        Returns an iterator for the imageMgr made up of the Pixels in the imageMgr. */
         for (let y = 0; y < this.image.height; y++) {
             for (let x = 0; x < this.image.width; x++) {
                 yield new Pixel(this, x, y);
@@ -111,10 +111,10 @@ class Viewport {
 }
 /* Class Pixel */
 class Pixel {
-    constructor(viewport, x, y) {
+    constructor(imageMgr, x, y) {
         /* Constructor for the Pixel class.
-        Takes the viewport and the x and y coordinates of the pixel as the arguments. */
-        this.viewport = viewport;
+        Takes the imageMgr and the x and y coordinates of the pixel as the arguments. */
+        this.imageMgr = imageMgr;
         this.x = x;
         this.y = y;
     }
@@ -129,15 +129,15 @@ class Pixel {
         let g = value[1];
         let b = value[2];
         let r = value[0];
-        this.viewport.context.fillStyle = "rgba("+r+","+g+","+b+","+(255/255)+")"; // set the color for the fill
-        this.viewport.context.fillRect( this.x, this.y, 1, 1 ); // Fills a 1x1 rectangle at the pixel location 
+        this.imageMgr.context.fillStyle = "rgba("+r+","+g+","+b+","+(255/255)+")"; // set the color for the fill
+        this.imageMgr.context.fillRect( this.x, this.y, 1, 1 ); // Fills a 1x1 rectangle at the pixel location 
         
     }
     __complex__() {
         /* Function to get the complex number of the pixel.
         Returns the complex number of the pixel. */
         return (
-            math.add(math.multiply(math.complex(this.x, -this.y), this.viewport.scale), this.viewport.offset)); // (x, -y) * scale + offset
+            math.add(math.multiply(math.complex(this.x, -this.y), this.imageMgr.scale), this.imageMgr.offset)); // (x, -y) * scale + offset
         
     }
 }
@@ -150,11 +150,11 @@ function createSet(canvas) {
     // Creates an instance of the MandelbrotSet class with max iterations of 20 and escape radius of 2.
     mandelbrot_set = new MandelbrotSet(20, 2);     
 
-    // Creates an instance of the Viewport class with the canvas, the center of (-0.5, oi) and width of 3.
-    viewport_obj = new Viewport(canvas, math.complex(-0.5, 0), 3);
+    // Creates an instance of the ImageMgr class with the canvas, the center of (-0.5, oi) and width of 3.
+    imageMgr_obj = new ImageMgr(canvas, math.complex(-0.5, 0), 3);
     
-    // Iterates through the viewport
-    for (var pixel of viewport_obj) {
+    // Iterates through the imageMgr
+    for (var pixel of imageMgr_obj) {
         
         // Gets the pixel as a complex number
         var c = pixel.__complex__();

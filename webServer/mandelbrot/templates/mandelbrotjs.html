@@ -12,6 +12,7 @@
     <p align="middle"><canvas id="myCanvas" width="1" height="1"></canvas></p>    
     <h2 id="busy" name="busy" style="display: none;"><i>(Probably)</i> Doing Something, Please Wait</h2>
     <script src="{{url_for('mandelbrot.static', filename='mandelbrot.js')}}"></script>
+    <script src="{{url_for('mandelbrot.static', filename='colourGradient.js')}}"></script>
     <style>
         /* The switch - the box around the slider */
 .switch {
@@ -100,12 +101,12 @@ input:checked + .slider:before {
                 const canvas = document.getElementById("myCanvas");
                 canvas.width = width;
                 canvas.height = height;
-                viewport_obj = new Viewport(canvas, math.complex(center_re, center_im), scale);
+                imageMgr_obj = new ImageMgr(canvas, math.complex(center_re, center_im), scale);
 
                 if (useColour){
                     let colours = getColours();
                     grad = createGradient(colours, "linear", 256);
-                    for (var pixel of viewport_obj) {
+                    for (var pixel of imageMgr_obj) {
                         var c = pixel.__complex__();
 
                         let stability = mandelbrot_set.stability(c);
@@ -113,7 +114,7 @@ input:checked + .slider:before {
                         pixel.color = grad[index % grad.length];
                     }
                 } else {
-                    for (var pixel of viewport_obj) {
+                    for (var pixel of imageMgr_obj) {
                         var c = pixel.__complex__();
                         let stability = mandelbrot_set.stability(c);
                         stability = 1 - stability;
@@ -128,50 +129,6 @@ input:checked + .slider:before {
             } , 10);
             
         }
-
-        function createGradient(colours, interpolation="linear", numOfColours=256){
-            let X = [];
-            let ammountOfColours = colours.length;
-            for (var i=0; i<ammountOfColours; i++){
-                X[i] = i/(ammountOfColours-1)
-            }
-            let Y = [[], [], []];
-            for (var i=0; i<3; i++){
-                for (var j = 0; j<ammountOfColours; j++){
-                    Y[i][j] = colours[j][i];
-                }
-            }
-            let nums = [];
-            for (var i=0; i<numOfColours; i++){
-                nums[i] = i * (1/numOfColours);
-            }
-            let grad = [[], [], []];
-            grad[0] = everpolate.linear(nums, X, Y[0]);
-            grad[1] = everpolate.linear(nums, X, Y[1]);
-            grad[2] = everpolate.linear(nums, X, Y[2]);
-            let gradient = [];
-            for (var i=0; i<grad[0].length; i++){
-                gradient[i] = [grad[0][i]*256, grad[1][i]*256, grad[2][i]*256];
-            }
-            return gradient;
-
-        }
-        function getColours(){
-            let colours = [];
-            const colContainer = document.getElementById("colours");
-            const cols = colContainer.children;
-            for (var i=0; i<cols.length; i++){
-                color = cols[i].value
-                const r = parseInt(color.substr(1,2), 16)
-                const g = parseInt(color.substr(3,2), 16)
-                const b = parseInt(color.substr(5,2), 16)
-                colours[i] = [r/256, g/256, b/256];
-            }
-            return colours;
-
-        }
-        
-        
         </script>
 
     <form id="form" name="form" action="javascript:createSet()">
