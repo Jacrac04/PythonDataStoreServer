@@ -1,4 +1,3 @@
-from calendar import day_abbr
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from ..models import PythonData, PythonDataAuthTokens, Project
 from flask_login import current_user

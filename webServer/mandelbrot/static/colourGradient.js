@@ -1,13 +1,13 @@
 
 function createGradient(colours, interpolation="linear", numOfColours=256){
     let X = [];
-    let ammountOfColours = colours.length;
-    for (var i=0; i<ammountOfColours; i++){
-        X[i] = i/(ammountOfColours-1)
+    let amountOfColours = colours.length;
+    for (var i=0; i<amountOfColours; i++){
+        X[i] = i/(amountOfColours-1)
     }
     let Y = [[], [], []];
     for (var i=0; i<3; i++){
-        for (var j = 0; j<ammountOfColours; j++){
+        for (var j = 0; j<amountOfColours; j++){
             Y[i][j] = colours[j][i];
         }
     }

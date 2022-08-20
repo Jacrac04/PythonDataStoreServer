@@ -1,4 +1,3 @@
-from webServer import create_app
 
 def test_home_page(test_client):
     """
@@ -11,7 +10,8 @@ def test_home_page(test_client):
     assert b'Welcome' in response.data
     assert b'Login' in response.data
     assert b'Register' in response.data
-    
+
+
 class TestLogin():
     def test_login_page(self, test_client):
         """
@@ -24,7 +24,7 @@ class TestLogin():
         assert b'Login' in response.data
         assert b'Email' in response.data
         assert b'Password' in response.data
-    
+
     def test_login_post(self, test_client):
         """
         GIVEN a Flask application configured for testing
@@ -39,7 +39,6 @@ class TestLogin():
         assert response.status_code == 302
         assert 'Set-Cookie' in response.headers
         assert self._test_after_login(test_client)
-        
 
     def _test_after_login(self, test_client):
         """
@@ -50,7 +49,7 @@ class TestLogin():
         response = test_client.get('/profile')
         assert b'Test' in response.data
         return True
-    
+
     def test_logout(self, test_client):
         """
         GIVEN a Flask application configured for testing
@@ -60,7 +59,7 @@ class TestLogin():
         response = test_client.get('/logout')
         assert response.status_code == 302
         assert self._test_after_logout(test_client)
-        
+
     def _test_after_logout(self, test_client):
         """
         GIVEN a Flask application configured for testing
@@ -70,7 +69,8 @@ class TestLogin():
         response = test_client.get('/profile')
         assert response.status_code == 302
         return True
-    
+
+
 class TestRegister():
     def test_register_page(self, test_client):
         """
@@ -83,7 +83,7 @@ class TestRegister():
         assert b'Register' in response.data
         assert b'Email' in response.data
         assert b'Password' in response.data
-    
+
     def test_register_post(self, test_client):
         """
         GIVEN a Flask application configured for testing
@@ -100,7 +100,7 @@ class TestRegister():
             })
         assert response.status_code == 302
         assert self._test_after_register(test_client)
-        
+
     def _test_after_register(self, test_client):
         """
         GIVEN a Flask application configured for testing
@@ -110,7 +110,7 @@ class TestRegister():
         response = test_client.get('/login')
         assert b'registered' in response.data
         return True
-        
+
     def test_register_post_fail(self, test_client):
         """
         GIVEN a Flask application configured for testing
