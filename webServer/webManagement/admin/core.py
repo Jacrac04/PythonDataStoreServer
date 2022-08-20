@@ -3,15 +3,13 @@ from flask_admin import Admin, AdminIndexView
 import flask_login as login
 from ... import db
 from ...models import User, PythonData, PythonDataAuthTokens, Project
-from flask import url_for, redirect, request
-import flask_login as login
-from flask import Blueprint, render_template, request, flash, redirect, url_for
+from flask import url_for, redirect, request, Blueprint
 
 
 class AdminBlueprint(Blueprint):
     views = None
 
-    def __init__(self, *args, **kargs):
+    def __init__(self, *args, **kwargs):
         self.views = []
         return super(
             AdminBlueprint,

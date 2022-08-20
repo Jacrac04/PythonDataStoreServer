@@ -1,5 +1,6 @@
 from webServer import models
 
+
 def test_user_model(newUser):
     """
     GIVEN a User model
@@ -9,7 +10,8 @@ def test_user_model(newUser):
     # user = models.User('test@test.com', 'test', 'test')
     assert newUser.email == 'test@test.com'
     assert newUser.password != 'test'
-    
+
+
 def test_pythonData_model():
     """
     GIVEN a PythonData model
@@ -18,18 +20,21 @@ def test_pythonData_model():
     """
     pythonData = models.PythonData(dataJson='[1,2,3]')
     assert pythonData.dataJson == '[1,2,3]'
-                                
+
+
 def test_pythonDataAuthTokens_model():
     """
     GIVEN a PythonDataAuthTokens model
     WHEN a new PythonDataAuthTokens is created
-    THEN check that the authToken field is defined correctly and unique and the tokenType field is defined correctly
+    THEN check that the authToken field is defined correctly and unique
+        and the tokenType field is defined correctly
     """
     pythonDataAuthTokens1 = models.PythonDataAuthTokens('r', 1)
     pythonDataAuthTokens2 = models.PythonDataAuthTokens('w', 1)
     assert pythonDataAuthTokens1.tokenType == 'r'
     assert pythonDataAuthTokens1.authToken != pythonDataAuthTokens2.authToken
-                                
+
+
 def test_Project_model():
     """
     GIVEN a Project model

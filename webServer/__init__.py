@@ -5,9 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
 
-from flask_admin.contrib.sqla import ModelView
-from flask_admin import Admin
-from config import Config
+
 import os
 
 
@@ -26,6 +24,7 @@ def create_app(CONFIG_TYPE=None):
 
     db.init_app(app)
     migrate = Migrate(app, db, render_as_batch=True)
+    migrate = migrate  # Trick flake8
 
     login_manager = LoginManager()
     login_manager.login_view = 'auth.login'
@@ -55,7 +54,7 @@ def create_app(CONFIG_TYPE=None):
 
     from .codeManagement.gitUpdate import gitUpdate as gitUpdate_blueprint
     app.register_blueprint(gitUpdate_blueprint, url_prefix='/gitUpdate')
-    
+
     from .mandelbrot.mandelbrotPages import mandelbrot as mandelbrot_blueprint
     app.register_blueprint(mandelbrot_blueprint, url_prefix='/mandelbrot')
 

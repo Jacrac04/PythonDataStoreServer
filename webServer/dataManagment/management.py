@@ -2,7 +2,7 @@ from webServer import db
 from ..pythonInterface.models import PythonData
 from .models import PythonDataAuthTokens
 import json
-from .errors import *
+from .errors import DataNotFoundError, AuthTokenError
 
 
 class Data():

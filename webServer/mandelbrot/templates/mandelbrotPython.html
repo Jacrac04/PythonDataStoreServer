@@ -1,0 +1,43 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<div>
+    <div class="jumbotron text-center">
+        <div style="display: flex; align-items: center; margin-left: 5%; margin-bottom: 5%; margin-right: 0%;">
+            <div style="width: 40%; float:left;">
+                <h2 style="vertical-align: middle; font-size: 3em">A Simple Black And White Mandelbrot Set</h2>
+            </div>
+            <div style="width: 70%; float:right;;">
+                <img src="{{url_for('mandelbrot.static', filename='mandelbrot.jpg')}}" align="centre" /><p></p>
+            </div>
+        </div>
+        <script src="https://gist.github.com/Jacrac04/2d491055ebbb7dee7dec3577798f2969.js"></script>
+    </div>
+        <!-- <h2>A Simple Black And White MandelBrot Set</h2>
+        <img src="{{url_for('mandelbrot.static', filename='mandelbrot.jpg')}}" align="centre" /><p></p> -->
+        
+</div>
+<p></p>
+<div>
+    <div class="jumbotron text-center">
+        <div style="display: flex; align-items: center; margin-left: 5%; margin-bottom: 5%; margin-right: 0%;">
+            <div style="width: 40%; float:left;">
+                <h2 style="vertical-align: middle; font-size: 3em">A Colour MandelBrot Set</h2>
+            </div>
+            <div style="width: 70%; float:right;;">
+                <img src="{{url_for('mandelbrot.static', filename='colourmandelbrot.jpg')}}" align="centre" /><p></p>
+            </div>
+        </div>
+        <script src="https://gist.github.com/Jacrac04/0c9596ee4c18476e59c2180e6188b170.js"></script>
+    </div>
+        <!-- <h2>A Simple Black And White MandelBrot Set</h2>
+        <img src="{{url_for('mandelbrot.static', filename='mandelbrot.jpg')}}" align="centre" /><p></p> -->
+        
+</div>
+    <!-- <div class="jumbotron text-center">
+        <h2>A Colour MandelBrot Set</h2>
+        <img src="{{url_for('mandelbrot.static', filename='colourmandelbrot.jpg')}}" align="middle" /><p></p>
+        <script src="https://gist.github.com/Jacrac04/0c9596ee4c18476e59c2180e6188b170.js"></script>
+    </div>
+</div> -->
+{% endblock %}

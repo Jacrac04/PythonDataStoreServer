@@ -1,0 +1,210 @@
+{% extends 'layout.html' %}
+
+{% block head %}
+  {{ super() }}
+  <script src="https://pagecdn.io/lib/mathjs/11.0.1/math.js" type="text/javascript"></script>
+  <script src="https://unpkg.com/everpolate/everpolate.browserified.min.js"></script>
+{% endblock %}
+
+
+{% block body %}
+<div class="jumbotron">
+    <p align="middle"><canvas id="myCanvas" width="1" height="1"></canvas></p>    
+    <h2 id="busy" name="busy" style="display: none;"><i>(Probably)</i> Doing Something, Please Wait</h2>
+    <script src="{{url_for('mandelbrot.static', filename='mandelbrot.js')}}"></script>
+    <script src="{{url_for('mandelbrot.static', filename='colourGradient.js')}}"></script>
+    <style>
+        /* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+    </style>
+    <script type="text/javascript">
+        function toggleBusy() {
+            var busy = document.getElementById("busy");
+            busy.style.display = busy.style.display == "none" ? "block" : "none";
+        }
+        
+        function createSet() {
+            toggleBusy();
+            setTimeout(function(){
+                const form = document.getElementById("form");
+                const max_ittr = form.elements["max_ittr"].value;
+                const escape_radius = form.elements["escape_radius"].value;
+                const center_re = form.elements["center_re"].value;
+                const center_im = form.elements["center_im"].value;
+                const width = form.elements["width"].value;
+                const height = form.elements["height"].value;
+                const scale = form.elements["scale"].value;
+
+                const useColour = form.elements["swColour"].checked;
+
+                mandelbrot_set = new MandelbrotSet(max_ittr, escape_radius);     
+                const canvas = document.getElementById("myCanvas");
+                canvas.width = width;
+                canvas.height = height;
+                imageMgr_obj = new ImageMgr(canvas, math.complex(center_re, center_im), scale);
+
+                if (useColour){
+                    let colours = getColours();
+                    grad = createGradient(colours, "linear", 256);
+                    for (var pixel of imageMgr_obj) {
+                        var c = pixel.__complex__();
+
+                        let stability = mandelbrot_set.stability(c);
+                        let index = Math.round(Math.min(stability * grad.length, grad.length - 1))
+                        pixel.color = grad[index % grad.length];
+                    }
+                } else {
+                    for (var pixel of imageMgr_obj) {
+                        var c = pixel.__complex__();
+                        let stability = mandelbrot_set.stability(c);
+                        stability = 1 - stability;
+                        // if (mandelbrot_set.contains(c)) {
+                        //     pixel.color = [0, 0, 0];
+                        // } else {
+                        //     pixel.color = [255, 255, 255];
+                        pixel.color = [stability * 255, stability * 255, stability * 255];
+                    }
+                }
+                toggleBusy();
+            } , 10);
+            
+        }
+        </script>
+
+    <form id="form" name="form" action="javascript:createSet()">
+        <div class="form-group">
+            <label for="max_ittr">Max Iterations:</label>
+            <input type="text" class="form-control" id="max_ittr" name="max_ittr" value="20"><br>
+        </div>
+        <div class="form-group">
+            <label for="escape_radius">Escape Radius:</label>
+            <input type="text" class="form-control" id="escape_radius" name="escape_radius" value="2"><br>
+        </div>
+        <div class="form-group">
+            <label for="center_re">Center Real Component (Units):</label>
+            <input type="text" class="form-control" id="lname" name="center_re" value="-0.5"><br>
+        </div>
+        <div class="form-group">
+            <label for="center_im">Center Imaginary (i Units):</label>
+            <input type="text" class="form-control" id="center_im" name="center_im" value="0">
+        </div>
+        <div class="form-group">
+            <label for="width">Width:</label>
+            <input type="text" class="form-control" id="width" name="width" value="800"><br>
+        </div>
+        <div class="form-group">
+            <label for="height">Height:</label>
+            <input type="text" class="form-control" id="height" name="height" value="500"><br>
+        </div>
+        <div class="form-group">
+            <label for="scale">Width of Set:</label>
+            <input type="text" class="form-control" id="scale" name="scale" value="3"><br>
+        </div>
+        <div class="form-group">
+            <label for="sw">Colour:</label><p></p>
+            <label id="sw" class="switch">
+                <input id="swColour" name="swColour" type="checkbox" onchange="toggleColour()">
+                <span class="slider round"></span>
+              </label>
+        </div>
+        <script>
+            function toggleColour(){
+                var sw = document.getElementById("swColour");
+                var colContainer = document.getElementById("colourStuff");
+                if (sw.checked){
+                    colContainer.style.display = "block";
+                }
+                else{
+                    colContainer.style.display = "none";
+                }
+            }
+            function addColourBtn() {
+                let btn = document.createElement("input");
+                btn.type = "color";
+                document.getElementById("colours").appendChild(btn);
+            }
+            function deleteColourBtn() {
+                let colContainer = document.getElementById("colours");
+                let cols = colContainer.children;
+                if (cols.length > 1){
+                    colContainer.removeChild(cols[cols.length-1]);
+                }
+            }
+        </script>
+        <div id="colourStuff" name="colourStuff" style="display: none;">
+            <div id="colours" name="colours">
+                <input type="color" value="#000000">
+                <input type="color" value="#000080">
+                <input type="color" value="#0000FF">
+                <input type="color" value="#800000">
+                <input type="color" value="#ff0000">
+                <input type="color" value="#000000">
+            </div>
+            <button type="button" onclick="addColourBtn()" class="btn btn-secondary">Add Colour</button>
+            <button type="button" onclick="deleteColourBtn()" class="btn btn-secondary">Delete Colour</button> 
+        </div>
+        <p> </p>
+        <button type="submit" class="btn btn-primary" action="javascript:createSet()">Create</button>
+    </form>
+
+{% endblock %}

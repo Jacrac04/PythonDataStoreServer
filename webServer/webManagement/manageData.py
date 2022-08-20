@@ -1,4 +1,3 @@
-from calendar import day_abbr
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from ..models import PythonData, PythonDataAuthTokens, Project
 from flask_login import current_user
@@ -64,6 +63,7 @@ def project(project_id):
         return redirect(url_for('manageData.project', project_id=project_id))
     form.name.data = project.name
     form.description.data = project.description
+    print(project, project.pythonData[0], type(project), type(project.pythonData[0]))
     return render_template(
         'manageDataProject.html',
         form=form,
@@ -78,6 +78,7 @@ def data(data_id):
         return redirect(url_for('manageData.projects'))
     form = DataForm(request.form)
     forms = dict()
+    print(data.authTokens)
     for dataAuthToken in data.authTokens:
         x = AuthTokenForm(request.form, id=dataAuthToken.id)
         x.tokenType.data = dataAuthToken.tokenType
