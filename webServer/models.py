@@ -1,6 +1,8 @@
 from flask_login import UserMixin
 from . import db
 from werkzeug.security import generate_password_hash
+from webServer.dataManagment.models import PythonDataAuthTokens, Project  # noqa: F401
+from webServer.pythonInterface.models import PythonData  # noqa: F401
 
 
 class User(UserMixin, db.Model):
