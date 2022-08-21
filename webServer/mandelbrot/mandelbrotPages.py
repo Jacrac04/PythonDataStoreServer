@@ -13,7 +13,7 @@ def pythonMandelbrot():
 
 @mandelbrot.route('/js')
 def jsMandelbrot():
-    return render_template('mandelbrotJs.html')
+    return render_template('mandelbrotjs.html')
 
 
 @mandelbrot.route('/')

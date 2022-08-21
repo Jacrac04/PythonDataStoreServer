@@ -112,7 +112,7 @@ def webhook():
     else:
         abort_code = 418
         # Do initial validations on required headers
-        checkHeaders(request.headers)
+        # checkHeaders(request.headers, abort_code)
 
         success, msg = checks(request, abort_code)
         if not success:
