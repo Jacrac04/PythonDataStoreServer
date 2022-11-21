@@ -43,19 +43,6 @@ def login():
     return render_template('login.html')
 
 
-def test_context():
-    if has_request_context():
-        print('Request context 22', request.cookies)
-    else:
-        print('No request context')
-    print(session.keys())
-
-@auth.route('/authtests', methods=['GET', 'POST'])
-@login_required
-def authtests():
-    test_context()
-    return f"<h1>Auth tests {current_user.name}</h1>"
-
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
 
