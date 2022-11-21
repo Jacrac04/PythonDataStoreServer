@@ -1,9 +1,12 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash
+from flask import Blueprint, render_template, redirect, url_for, request, flash, session, has_request_context
 from werkzeug.security import check_password_hash
-from flask_login import login_user, logout_user, login_required
 from webServer.models import User
 from webServer import db
 from wtforms import Form, StringField, PasswordField, validators
+from webServer.authHandling.loginUtils import login_required, login_user, logout_user, current_user
+
+    
+
 
 auth = Blueprint(
     'auth',
@@ -23,7 +26,6 @@ class Registerform(Form):
     ])
     confirm = PasswordField('Confirm Password')
 
-
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -40,6 +42,19 @@ def login():
         return redirect(url_for('main.profile'))
     return render_template('login.html')
 
+
+def test_context():
+    if has_request_context():
+        print('Request context 22', request.cookies)
+    else:
+        print('No request context')
+    print(session.keys())
+
+@auth.route('/authtests', methods=['GET', 'POST'])
+@login_required
+def authtests():
+    test_context()
+    return f"<h1>Auth tests {current_user.name}</h1>"
 
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
@@ -82,3 +97,5 @@ def register():
 def logout():
     logout_user()
     return redirect(url_for('main.index'))
+
+

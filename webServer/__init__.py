@@ -4,6 +4,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
+from .authHandling.sessions import Session
 
 
 import os
@@ -29,6 +30,10 @@ def create_app(CONFIG_TYPE=None):
     login_manager = LoginManager()
     login_manager.login_view = 'auth.login'
     login_manager.init_app(app)
+    
+    sess = Session()
+    sess.init_app(app)
+    
 
     from .models import User
 
