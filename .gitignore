@@ -45,4 +45,4 @@ webServer/mandelbrot/__pycache__/mandelbrotPages.cpython-310.pyc
 webServer/mandelbrot/__pycache__/*
 flask_session/*
 webServer/sessions/*
-webServer/authHandling/*
+webServer/authHandling/__pycache__/*
