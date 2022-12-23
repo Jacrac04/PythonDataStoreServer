@@ -44,13 +44,14 @@ mangData = Blueprint(
 
 @mangData.route('/projects')
 def projects():
-    projects = Project.query.filter_by(ownerId=current_user.id).all()
+    projects = Project.query.filter_by(ownerId=current_user.id)
     return render_template('manageDataHome.html', projects=projects)
 
 
 @mangData.route('/projects/<int:project_id>', methods=['GET', 'POST'])
 def project(project_id):
-    project = Project.query.filter_by(id=project_id).first()
+    project = Project.query.filter_by(id=project_id)[0]
+    print(project.owner, current_user)
     if project.owner != current_user:
         flash('You do not have permission to view this project', 'danger')
         return redirect(url_for('manageData.projects'))
@@ -72,7 +73,7 @@ def project(project_id):
 
 @mangData.route('/data/<int:data_id>', methods=['GET', 'POST'])
 def data(data_id):
-    data = PythonData.query.filter_by(id=data_id).first()
+    data = PythonData.query.filter_by(id=data_id)[0]
     if data.project.owner != current_user:
         flash('You do not have permission to view this data', 'danger')
         return redirect(url_for('manageData.projects'))
@@ -86,7 +87,7 @@ def data(data_id):
     if request.method == 'POST':
         data.name = form.name.data
         data.dataJson = form.dataJson.data
-        db.session.commit()
+        # db.session.commit()
 
         # flash('Data updated', 'success')
         return redirect(url_for('manageData.data', data_id=data_id))
@@ -109,8 +110,8 @@ def createProject():
             name=name,
             ownerId=current_user.id,
             description=description)
-        db.session.add(project)
-        db.session.commit()
+        # db.session.add(project)
+        # db.session.commit()
         flash('Project created', 'success')
         return redirect(url_for('manageData.projects'))
     return render_template('editDataProject.html', form=form, keyword='Create')
@@ -118,7 +119,7 @@ def createProject():
 
 @mangData.route('/projects/<int:project_id>/edit', methods=['GET', 'POST'])
 def editProject(project_id):
-    project = Project.query.filter_by(id=project_id).first()
+    project = Project.query.filter_by(id=project_id)[0]
     if project.owner != current_user:
         flash('You do not have permission to edit this project', 'danger')
         return redirect(url_for('manageData.projects'))
@@ -128,7 +129,7 @@ def editProject(project_id):
         description = form.description.data
         project.name = name
         project.description = description
-        db.session.commit()
+        # db.session.commit()
         flash('Project edited', 'success')
         return redirect(url_for('manageData.projects'))
     form.name.data = project.name
@@ -138,7 +139,7 @@ def editProject(project_id):
 
 @mangData.route('/projects/<int:project_id>/newData', methods=['GET', 'POST'])
 def createData(project_id):
-    project = Project.query.filter_by(id=project_id).first()
+    project = Project.query.filter_by(id=project_id)[0]
     if project.owner != current_user:
         flash('You do not have permission to add data to this project', 'danger')
         return redirect(url_for('manageData.projects'))
@@ -147,8 +148,8 @@ def createData(project_id):
         name = form.name.data
         dataJson = form.dataJson.data
         data = PythonData(name=name, dataJson=dataJson, projectId=project_id)
-        db.session.add(data)
-        db.session.commit()
+        # db.session.add(data)
+        # db.session.commit()
         flash('Data created', 'success')
         return redirect(url_for('manageData.data', data_id=data.id))
     return render_template('editDataData.html', form=form, keyword='Create')
@@ -156,7 +157,7 @@ def createData(project_id):
 
 @mangData.route('/data/<int:data_id>/edit', methods=['GET', 'POST'])
 def editData(data_id):
-    data = PythonData.query.filter_by(id=data_id).first()
+    data = PythonData.query.filter_by(id=data_id)[0]
     if data.project.owner != current_user:
         flash('You do not have permission to view this data', 'danger')
         return redirect(url_for('manageData.projects'))
@@ -166,7 +167,7 @@ def editData(data_id):
         dataJson = form.dataJson.data
         data.name = name
         data.dataJson = dataJson
-        db.session.commit()
+        # db.session.commit()
         flash('Data edited', 'success')
         return redirect(
             url_for(
@@ -179,7 +180,7 @@ def editData(data_id):
 
 @mangData.route('/authToken/<int:authToken_id>', methods=['GET', 'POST'])
 def authToken(authToken_id):
-    authToken = PythonDataAuthTokens.query.filter_by(id=authToken_id).first()
+    authToken = PythonDataAuthTokens.query.filter_by(id=authToken_id)[0]
     if authToken.data.project.owner != current_user:
         flash('You do not have permission to view this authToken', 'danger')
         return redirect(url_for('manageData.projects'))
@@ -188,7 +189,9 @@ def authToken(authToken_id):
 
 @mangData.route('/authToken/<int:authToken_id>/delete', methods=['POST'])
 def deleteAuthToken(authToken_id):
-    authToken = PythonDataAuthTokens.query.filter_by(id=authToken_id).first()
+    authToken = PythonDataAuthTokens.query.filter_by(id=authToken_id)[0]
+    flash('Not Implemented', 'danger')
+    return redirect(url_for('manageData.projects'))
     if authToken.pythonData.project.owner != current_user:
         flash('You do not have permission to delete this authToken', 'danger')
         return redirect(url_for('manageData.projects'))
@@ -200,26 +203,26 @@ def deleteAuthToken(authToken_id):
 
 @mangData.route('/authToken/<int:authToken_id>/update', methods=['POST'])
 def updateAuthToken(authToken_id):
-    authToken = PythonDataAuthTokens.query.filter_by(id=authToken_id).first()
+    authToken = PythonDataAuthTokens.query.filter_by(id=authToken_id)[0]
     if authToken.pythonData.project.owner != current_user:
         flash('You do not have permission to update this authToken', 'danger')
         return redirect(url_for('manageData.projects'))
     authToken.tokenType = request.form['tokenType']
-    db.session.commit()
+    # db.session.commit()
     flash('AuthToken updated', 'success')
     return redirect(request.referrer)
 
 
 @mangData.route('/data/<int:data_id>/new', methods=['POST'])
 def createAuthToken(data_id):
-    data = PythonData.query.filter_by(id=data_id).first()
+    data = PythonData.query.filter_by(id=data_id)[0]
     if data.project.owner != current_user:
         flash(
             'You do not have permission to create an authToken for this data',
             'danger')
         return redirect(url_for('manageData.projects'))
     authToken = PythonDataAuthTokens(pythonDataId=data.id, tokenType='r')
-    db.session.add(authToken)
-    db.session.commit()
+    # db.session.add(authToken)
+    # db.session.commit()
     flash('AuthToken created', 'success')
     return redirect(request.referrer)

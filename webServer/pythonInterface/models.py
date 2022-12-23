@@ -2,11 +2,10 @@ from .. import db
 
 
 class PythonData(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(20))
-    dataJson = db.Column(db.String(10000))
-    authTokens = db.relationship(
-        'PythonDataAuthTokens',
-        back_populates='pythonData')
-    projectId = db.Column(db.Integer, db.ForeignKey('project.id'))
-    project = db.relationship('Project', back_populates="pythonData")
+    id = db.Field('id', data_type='int', primary_key=True)
+    name = db.Field('name', data_type='varchar')
+    dataJson = db.Field('dataJson', data_type='varchar')
+    authTokens = db.Relationship('PythonDataAuthTokens', 'pythonData')
+    projectId = db.ForeignKey('project.id')
+    project = db.Relationship('Project', "pythonData")
+    pass
