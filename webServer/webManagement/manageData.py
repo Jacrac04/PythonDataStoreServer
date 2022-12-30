@@ -59,7 +59,7 @@ def project(project_id):
     if request.method == 'POST' and form.validate():
         project.name = form.name.data
         project.description = form.description.data
-        db.session.commit()
+        # db.session.commit()
         flash('Project updated', 'success')
         return redirect(url_for('manageData.project', project_id=project_id))
     form.name.data = project.name
