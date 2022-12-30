@@ -4,15 +4,20 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
+from sorm.orm import ORM
 from .authHandling.sessions import Session
-
-
 import os
 
 
-# init SQLAlchemy so we can use it later in our models
-db = SQLAlchemy()
+# # init SQLAlchemy so we can use it later in our models
+# db = SQLAlchemy()
 
+SETTINGS = {
+            'type': 'SQLITE',
+            'databaseURI': 'dev.sqlite',
+            'isolation_level': 'DEFERRED'
+        }  
+db = ORM(SETTINGS)
 
 def create_app(CONFIG_TYPE=None):
     app = Flask(__name__)
@@ -23,9 +28,9 @@ def create_app(CONFIG_TYPE=None):
             default='config.DevelopmentConfig')
     app.config.from_object(CONFIG_TYPE)
 
-    db.init_app(app)
-    migrate = Migrate(app, db, render_as_batch=True)
-    migrate = migrate  # Trick flake8
+    # db.init_app(app)
+    # migrate = Migrate(app, db, render_as_batch=True)
+    # migrate = migrate  # Trick flake8
 
     login_manager = LoginManager()
     login_manager.login_view = 'auth.login'
@@ -39,7 +44,7 @@ def create_app(CONFIG_TYPE=None):
 
     @login_manager.user_loader
     def load_user(user_id):
-        return User.query.get(int(user_id))
+        return User.query.filter_by(id=user_id)[0]
 
     from .webManagement.admin.core import admin as admin_blueprint
     app.register_blueprint(admin_blueprint)

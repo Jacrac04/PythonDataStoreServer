@@ -33,7 +33,9 @@ def login():
         password_candidate = request.form['password']
         remember = True if request.form.get('remember') else False
 
-        user = User.query.filter_by(email=email).first()
+        user = User.query.filter_by(email=email)
+        print(user)
+        user = user[0]
         if not user or not check_password_hash(
                 user.password, password_candidate):
             flash('Please check your login details and try again.', 'danger')
@@ -58,7 +60,7 @@ def register():
             name = username
 
         # if this returns a user, then the email already exists in database
-        user = User.query.filter_by(email=email).first()
+        user = User.query.filter_by(email=email)[0]
 
         if user:  # if a user is found, we want to redirect back to signup page so user can try again
             flash('Email address already exists')
@@ -84,5 +86,3 @@ def register():
 def logout():
     logout_user()
     return redirect(url_for('main.index'))
-
-

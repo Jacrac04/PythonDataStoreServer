@@ -101,7 +101,7 @@ class HomeAdminView(AdminIndexView):
 
 # with app.app_context():
 admin = AdminBlueprint(name='admin', url_prefix='/admin')
-admin.add_view(UserView(User, db.session))
-admin.add_view(PythonDataView(PythonData, db.session))
-admin.add_view(PythonDataAuthTokensView(PythonDataAuthTokens, db.session))
-admin.add_view(ProjectView(Project, db.session))
+# admin.add_view(UserView(User, db.session))
+# admin.add_view(PythonDataView(PythonData, db.session))
+# admin.add_view(PythonDataAuthTokensView(PythonDataAuthTokens, db.session))
+# admin.add_view(ProjectView(Project, db.session))

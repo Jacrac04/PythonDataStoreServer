@@ -46,3 +46,4 @@ webServer/mandelbrot/__pycache__/*
 flask_session/*
 webServer/sessions/*
 webServer/authHandling/__pycache__/*
+dev.sqlite

@@ -5,28 +5,28 @@ from webServer.dataManagment.models import PythonDataAuthTokens, Project  # noqa
 from webServer.pythonInterface.models import PythonData  # noqa: F401
 
 
-class User(UserMixin, db.Model):
-    id = db.Column(db.Integer, primary_key=True)  # primary keys are required by SQLAlchemy
-    email = db.Column(db.String(100), unique=True)
-    password = db.Column(db.String(100))
-    name = db.Column(db.String(1000))
-    admin = db.Column(db.Boolean, default=False)
-    projects = db.relationship('Project', back_populates="owner")
-
+class User(db.Model):
+    id = db.Field('id', data_type='int', primary_key=True)
+    email = db.Field('email', data_type='varchar')
+    password = db.Field('password', data_type='varchar')
+    name = db.Field('name', data_type='varchar')
+    admin = db.Field('admin', data_type='boolean')
+    projects = db.Relationship('Project', 'owner')
+    
     def __init__(self, email, password, name, admin=False):
         self.email = email
         self.password = self._generate_password_hash(password)
         self.name = name
         self.admin = admin
-
+    
     @staticmethod
-    def _generate_password_hash(password_plaintext: str):
+    def _generate_password_hash (password_plaintext: str):
         return generate_password_hash(password_plaintext, method='sha256')
-
+    
     @property
     def is_authenticated(self):
         return True
-
+    
     @property
     def is_admin(self):
         return self.admin
@@ -44,8 +44,4 @@ class User(UserMixin, db.Model):
 
     # Required for administrative interface
     def __unicode__(self):
-        return self.username
-
-# @login_manager.user_loader
-# def load_user(user_id):
-#     # since the user_id is just the primary key of our user table, use it in the query for the user
+        return self.name

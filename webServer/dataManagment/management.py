@@ -23,11 +23,12 @@ class Data():
         self._getInternals()
 
     def _getInternals(self):
-        data = PythonData.query.filter_by(id=self.id).first()
+        # data2 = PythonData.query.filter_by(name="Test Data 5")[0]
+        data = PythonData.query.filter_by(id=self.id)[0]
         if not data:
             raise DataNotFoundError('error No data found')
         authToken = PythonDataAuthTokens.query.filter_by(
-            authToken=self.token).first()
+            authToken=self.token)[0]
         if authToken not in data.authTokens:
             raise AuthTokenError('error Invalid authToken')
         self.authToken = authToken
