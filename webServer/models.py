@@ -1,8 +1,7 @@
 from flask_login import UserMixin
 from . import db
 from werkzeug.security import generate_password_hash
-from webServer.dataManagment.models import PythonDataAuthTokens, Project  # noqa: F401
-from webServer.pythonInterface.models import PythonData  # noqa: F401
+from webServer.dataManagment.models import PythonDataAuthTokens, Project, PythonData  # noqa: F401
 
 
 class User(db.Model):
@@ -18,6 +17,7 @@ class User(db.Model):
         self.password = self._generate_password_hash(password)
         self.name = name
         self.admin = admin
+        self._proxy = None
     
     @staticmethod
     def _generate_password_hash (password_plaintext: str):
@@ -38,6 +38,18 @@ class User(db.Model):
     @property
     def is_anonymous(self):
         return False
+    
+    @property
+    def has_active_proxy(self):
+        return self._proxy is not None
+    
+    @property
+    def proxy(self):
+        return self._proxy
+    
+    @proxy.setter
+    def proxy(self, proxy):
+        self._proxy = proxy
 
     def get_id(self):
         return self.id

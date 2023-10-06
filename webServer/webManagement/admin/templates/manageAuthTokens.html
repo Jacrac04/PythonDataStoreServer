@@ -1,0 +1,34 @@
+{% extends 'admin_layout.html' %}
+    
+{% block body %}
+
+
+    <h1>AuthTokens</h1>
+    <!-- Create a table -->
+    <table id="tokens" class="table table-striped">
+        <thead class="thead thead-dark">
+          <!-- Headings of the Columns-->
+          <tr>
+            <th>Token ID</th>
+            <th>Token Type</th>
+            <th>Token</th>
+            <th>Delete Token</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Loop through the projects and display them -->
+          {% for token in tokens%}
+            <tr>
+              <td>{{ token.id }}  </td>
+              <td>{{ token.tokenType }}</td>
+              <td>{{ token.authToken }}</td>
+
+              <td>
+                <form action="/admin/authTokens/{{ token.id }}/delete" method="POST" style="display: inline;">
+                  <input type="submit" class="btn btn-danger btn" value="Delete">
+                </form>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+{% endblock %}

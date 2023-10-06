@@ -19,7 +19,7 @@ class ServerSideSession(CallbackDict, SessionMixin):
         if permanent:
             self.permanent = permanent
         self.modified = False
-
+ 
 class FileBasedSession(ServerSideSession):
     pass
 
@@ -35,10 +35,13 @@ class FileBasedSessionInterface(FlaskSessionInterface):
 
      
     def open_session(self, app, request):
+        # Get the session ID from the request's cookies
         sid = request.cookies.get(app.session_cookie_name)
+        # If no session ID, create one
         if not sid:
             sid = self._generate_sid()
             return self.session_class(sid=sid, permanent=self.permanent)
+        # If the session ID was signed, unsign it
         if self.use_signer:
             signer = self._get_signer(app)
             if signer is None:
@@ -49,15 +52,18 @@ class FileBasedSessionInterface(FlaskSessionInterface):
             except BadSignature:
                 sid = self._generate_sid()
                 return self.session_class(sid=sid, permanent=self.permanent)
-
+        # Get the session data from the cache
         data = self.cache.get(self.key_prefix + sid)
+        # If no session data, create a new session
         if data is not None:
             return self.session_class(data, sid=sid)
         return self.session_class(sid=sid, permanent=self.permanent)
 
     def save_session(self, app, session, response):
+        # Get the domain and path for the cookie
         domain = self.get_cookie_domain(app)
         path = self.get_cookie_path(app)
+        # If there is no session, delete the cookie from the response
         if not session:
             if session.modified:
                 self.cache.delete(self.key_prefix + session.sid)
@@ -65,19 +71,24 @@ class FileBasedSessionInterface(FlaskSessionInterface):
                                        domain=domain, path=path)
             return
 
+        # Create the cookie parameters
         conditional_cookie_kwargs = {}
         httponly = self.get_cookie_httponly(app)
         secure = self.get_cookie_secure(app)
         if self.has_same_site_capability:
             conditional_cookie_kwargs["samesite"] = self.get_cookie_samesite(app)
         expires = self.get_expiration_time(app, session)
+        # Get the data for the session
         data = dict(session)
+        # Store the session data in the cache
         self.cache.set(self.key_prefix + session.sid, data,
                        total_seconds(app.permanent_session_lifetime))
+        # If the signer should be used, sign the session id
         if self.use_signer:
             session_id = self._get_signer(app).sign(want_bytes(session.sid))
         else:
             session_id = session.sid
+        # Set the cookie in the response
         response.set_cookie(app.session_cookie_name, session_id,
                             expires=expires, httponly=httponly,
                             domain=domain, path=path, secure=secure,
@@ -102,7 +113,6 @@ class Session(object):
             self.init_app(app)
 
     def init_app(self, app):
-
         app.session_interface = self._get_interface(app)
 
     def _get_interface(self, app):

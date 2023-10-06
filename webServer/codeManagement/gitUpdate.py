@@ -16,18 +16,6 @@ def is_valid_signature(x_hub_signature, data, private_key):
     mac = hmac.new(encoded_key, msg=data, digestmod=algorithm)
     return hmac.compare_digest(mac.hexdigest(), github_signature)
 
-# @gitUpdate.route('/update_source')
-# def update_source():
-#     x_hub_signature = request.headers.get('X-Hub-Signature')
-#     if not is_valid_signature(x_hub_signature, request.data, w_secret):
-#         return 'No Access', 400
-#     if request.method == 'POST':
-#         repo = git.Repo('path/to/git_repo')
-#         origin = repo.remotes.origin
-#         origin.pull()
-#         return 'Updated PythonAnywhere successfully', 200
-#     else:
-#         return 'Wrong event type', 400
 
 
 def checkHeaders(headers, abort_code):

@@ -1,15 +1,18 @@
+<!-- Use flasks get_flashed_messages() to get messages -->
 {% with messages = get_flashed_messages(with_categories=true) %}
+  <!-- If there are messages, loop through them -->
   {% if messages %}
     {% for category, message in messages %}
+      <!-- Display the message with the appropriate category -->
       <div class="alert alert-{{ category }}">{{ message }}</div>
     {% endfor %}
   {% endif %}
 {% endwith %}
 
-{% if error %}
+<!-- {% if error %}
   <div class="alert alert-danger">{{error}}</div>
 {% endif %}
 
 {% if msg %}
   <div class="alert alert-success">{{msg}}</div>
-{% endif %}
+{% endif %} -->

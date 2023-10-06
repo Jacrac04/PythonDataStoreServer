@@ -1,37 +1,45 @@
+<!-- This is the navbar that is included in all pages -->
 <nav class="navbar navbar-default">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">Home</a>
-        </div>
-        <div id="navbar" class="collapse navbar-collapse">
-          <ul class="nav navbar-nav">
-            <li><a href="/">Home</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/mandelbrot">Mandelbrot Set</a></li>
-            {% if current_user.is_authenticated %}
-              <li><a href="/projects">Projects</a></li>
-            {% endif %}
-	    {% if current_user.is_admin %}
-		<li><a href="/admin">Admin</a></li>
-      {% endif %}
-          </ul>
-		  <ul class="nav navbar-nav navbar-right">
-            {% if current_user.is_authenticated %}
-              <li><a href="/profile">Profile</a></li>
-              <li><a href="/logout">Logout</a></li>
-            {% else %}
-              <li><a href="/register">Register</a></li>
-              <li><a href="/login">Login</a></li>
-            {% endif %}
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">Home</a>
+    </div>
+    <div id="navbar" class="collapse navbar-collapse">
+      <ul class="nav navbar-nav">
 
-          </ul>
-         
-        </div>
-      </div>
-    </nav>
+        <!-- Links which can be seen whether the user is logged in or not -->
+        <li><a href="/">Home</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/mandelbrot">Mandelbrot Set</a></li>
+
+        <!-- Links which can only be seen when the user is logged in -->
+        {% if current_user.is_authenticated %}
+          <li><a href="/projects">Projects</a></li>
+        {% endif %}
+
+        <!-- Links which can only be seen when the user is an admin -->
+        {% if current_user.is_admin %}
+          <li><a href="/admin">Admin</a></li>
+        {% endif %}
+
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        {% if current_user.is_authenticated %}
+          <!-- Links which can only be seen when the user is logged in -->
+          <!-- <li><a href="/profile">Profile</a></li> -->
+          <li><a href="/logout">Logout</a></li>
+        {% else %}
+          <!-- Links which can only be seen when the user is not logged in -->
+          <li><a href="/register">Register</a></li>
+          <li><a href="/login">Login</a></li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>

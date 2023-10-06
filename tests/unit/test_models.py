@@ -8,7 +8,7 @@ def test_user_model(newUser):
     THEN check that the email and password fields are defined correctly
     """
     # user = models.User('test@test.com', 'test', 'test')
-    assert newUser.email == 'test@test.com'
+    assert newUser.email == 'test2@test.com'
     assert newUser.password != 'test'
 
 

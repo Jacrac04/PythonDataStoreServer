@@ -1,6 +1,6 @@
 from flask import Blueprint, request
 from webServer import db
-from ..models import PythonData, PythonDataAuthTokens
+from ..models import PythonData, PythonDataAuthTokens, PythonData
 from ..dataManagment.management import Data
 from ..dataManagment.errors import DataError
 import json
@@ -8,7 +8,7 @@ import json
 api = Blueprint('api', __name__)
 
 
-@api.route('/old/get/<int:id>', methods=['POST'])
+# @api.route('/old/get/<int:id>', methods=['POST'])
 def oldGetData(id):
     authToken = json.loads(request.get_json())['authToken']
     storedData = PythonData.query.filter_by(id=id).first()
@@ -20,7 +20,7 @@ def oldGetData(id):
     return storedData.dataJson
 
 
-@api.route('/old/create', methods=['post'])
+# @api.route('/old/create', methods=['post'])
 def createData():
     data = request.get_json()
     newData = PythonData(dataJson=data)
@@ -31,7 +31,7 @@ def createData():
 # Update data
 
 
-@api.route('/old/update/<int:id>', methods=['post'])
+# @api.route('/old/update/<int:id>', methods=['post'])
 def oldUpdateData(id):
     requestData = json.loads(request.get_json())
     data = requestData['data']
@@ -48,6 +48,7 @@ def oldUpdateData(id):
     return str(storedData.id)
 
 
+
 @api.route('/get/<int:id>', methods=['post'])
 def getData(id):
     data = json.loads(request.get_json())
@@ -61,20 +62,26 @@ def getData(id):
 @api.route('/append/<int:id>', methods=['post'])
 def appendData(id):
     data = json.loads(request.get_json())
-    dataObj = Data(id, data['token'])
-    return dataObj.appendData(data['data'])  # dataObj.getData()
+    try:
+        dataObj = Data(id, data['token'])
+        return dataObj.appendData(data['data'])  # dataObj.getData()
+    except DataError as e:
+        return str(e)
 
 
 @api.route('/update/<int:id>', methods=['post'])
 def updateData(id):
     data = json.loads(request.get_json())
-    dataObj = Data(id, data['token'])
-    return dataObj.setData(data['data'])  # dataObj.getData()
+    try:
+        dataObj = Data(id, data['token'])
+        return dataObj.setData(data['data'])  # dataObj.getData()
+    except DataError as e:
+        return str(e)
 
 
 @api.route('/testCreateAuth/<int:id>', methods=['GET'])
 def createAuthToken(id):
     newToken = PythonDataAuthTokens(tokenType='r', pythonDataId=id)
-    db.session.add(newToken)
-    db.session.commit()
+    # db.session.add(newToken)
+    # db.session.commit()
     return str(newToken.authToken)

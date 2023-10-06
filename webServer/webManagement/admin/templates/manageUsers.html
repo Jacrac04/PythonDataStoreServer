@@ -1,0 +1,44 @@
+{% extends 'admin_layout.html' %}
+    
+{% block body %}
+
+
+    <h1>Users</h1>
+    <!-- Create a table -->
+    <table id="tokens" class="table table-striped">
+        <thead class="thead thead-dark">
+          <!-- Headings of the Columns-->
+          <tr>
+            <th>Token ID</th>
+            <th>Token Type</th>
+            <th>Token</th>
+            <th>Delete Token</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Loop through the projects and display them -->
+          {% for user in users%}
+            <tr>
+              <td>{{ user.id }}  </td>
+              <td>{{ user.username }}</td>
+              <td>{{ user.email }}</td>
+
+              <td>
+                <form action="/admin/users/{{ user.id }}/delete" method="POST" style="display: inline;">
+                  <input type="submit" class="btn btn-danger btn" value="Delete">
+                </form>
+                <!-- Toggle Admin -->
+                {% if user.is_admin %}
+                  <form action="/admin/users/{{ user.id }}/toggleAdmin" method="POST" style="display: inline;">
+                    <input type="submit" class="btn btn-danger btn" value="Remove Admin">
+                  </form>
+                {% else %}
+                  <form action="/admin/users/{{ user.id }}/toggleAdmin" method="POST" style="display: inline;">
+                    <input type="submit" class="btn btn-success btn" value="Make Admin">
+                  </form>
+                {% endif %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+{% endblock %}

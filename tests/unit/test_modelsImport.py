@@ -1,6 +1,4 @@
-from webServer.models import User
-from webServer.dataManagment.models import PythonDataAuthTokens, Project
-from webServer.pythonInterface.models import PythonData
+from webServer.models import User, PythonData, PythonDataAuthTokens, Project
 
 
 def test_modelsImport():

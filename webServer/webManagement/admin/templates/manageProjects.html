@@ -1,9 +1,9 @@
-{% extends 'layout.html' %}
+{% extends 'admin_layout.html' %}
     
 {% block body %}
 
 
-    <h1>Your Projects</h1>
+    <h1>Projects</h1>
     <!-- Create a table -->
     <table id="projects" class="table table-striped">
         <thead class="thead thead-dark">
@@ -18,18 +18,15 @@
           <!-- Loop through the projects and display them -->
           {% for project in projects %}
             <tr>
-              <td>{{ project.name }}  <a href="/projects/{{ project.id }}/edit" >  <i class='fas fa-edit'></i></a></td>
+              <td>{{ project.name }}  </td>
               <td>{{ project.description }}</td>
               <td>
-                <a class="btn btn-primary btn" href="/projects/{{ project.id }}" role="button" id="aparatura">Manage</a>
-                <form action="/projects/{{ project.id }}/delete" method="POST" style="display: inline;">
+                <form action="/admin/projects/{{ project.id }}/delete" method="POST" style="display: inline;">
                   <input type="submit" class="btn btn-danger btn" value="Delete">
                 </form>
             </tr>
           {% endfor %}
         </tbody>
       </table>
-      <!-- Button to add a new project -->
-      <a class="btn btn-primary btn-lg" href="{{ url_for('manageData.createProject') }}" role="button" id="aparatura">Add New Project</a>
 {% endblock %}
 

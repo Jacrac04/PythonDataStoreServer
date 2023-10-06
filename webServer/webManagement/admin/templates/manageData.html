@@ -1,4 +1,4 @@
-{% extends 'layout.html' %}
+{% extends 'admin_layout.html' %}
     
 {% block body %}
 <script>
@@ -28,22 +28,8 @@
   }
 }
 </script>
-<!-- This is the form to edit the name and description of the project -->
-<h1 style="display:inline" id="Name">{{ project.name }}</h1> <i style="display:inline" id="toggleButton1" class='fas fa-edit' onclick="toggleForm()"></i>
-<p id="toggleButton1"></p>
-<h4 style="display:inline" id="description">{{ project.description }}</h4> <i id="toggleButton2" class='fas fa-edit' onclick="toggleForm()"></i> 
-<p id="toggleButton1"></p>
-<div>
-  {% from "includes/_formhelpers.html" import render_field2 %}
-  <form style="display:none" id="form" method="POST" action="">
-    <div class="form-group">
-      <h1 style="display:inline">{{render_field2(form.name, class_="form-control")}}</h1>
-      <p></p>
-      <h4 style="display:inline">{{render_field2(form.description, class_="form-control")}}</h4>
-    </div>
-    <p><input type="submit" class="btn btn-primary" value="Update"></p>
-  </form>
-</div>
+
+<h1>Data</h1>
 <p></p>
 <!-- This is the table with the data of the project -->
     <table id="pythonData" class="table table-striped">
@@ -58,9 +44,9 @@
         </thead>
         <!-- Loop through the data and display them -->
         <tbody>
-          {% for data in project.pythonData %}
+          {% for data in datas %}
             <tr>
-              <td>{{ data.name }}    <a href="/data/{{data.id}}/edit" >  <i class='fas fa-edit'></i></a></td>
+              <td>{{ data.name }}  </td>
               <td>{{ data.dataJson }}</td>
               <td>
                   <!-- Loop through the auth tokens and display them -->
@@ -69,8 +55,7 @@
                   {% endfor %}
               </td>
               <td>
-                <a class="btn btn-primary btn" href="/data/{{data.id}}" role="button" id="aparatura">Manage</a>
-                <form action="/data/{{data.id}}/delete" method="POST" style="display: inline;">
+                <form action="/admin/data/{{data.id}}/delete" method="POST" style="display: inline;">
                   <input type="submit" class="btn btn-danger btn" value="Delete">
                 </form>
               </td>
@@ -78,7 +63,6 @@
           {% endfor %}
         </tbody>
       </table>
-      <!-- Button to add a new data -->
-      <a class="btn btn-primary btn-lg" href="{{ url_for('manageData.createData', project_id=project.id) }}" role="button" id="aparatura">Add New Data</a>
+
 {% endblock %}
 

@@ -2,6 +2,7 @@
     
 {% block body %}
     <script>
+      // This function toggles the form to edit the name and description of the data
       function toggleForm() {
       var name = document.getElementById("Name");
       var dataJson = document.getElementById("dataJson");
@@ -27,6 +28,7 @@
       }
     }
     </script>
+    <!-- This is the form to edit the name and description of the data -->
     <h1 style="display:inline" id="DataId">Data ID: {{ data.id }}</h1>
     <p></p>
     <h1 style="display:inline" id="Name">{{ data.name }}</h1> <i style="display:inline" id="toggleButton1" class='fas fa-edit' onclick="toggleForm()"></i>
@@ -44,8 +46,10 @@
         <p><input type="submit" class="btn btn-primary" value="Update"></p>
       </form>
     </div>
+    <!-- This is the table to display the auth tokens -->
     <table id="authTokens" class="table table-striped">
         <thead>
+          <!-- Headings of the Columns-->
           <tr>
             <th>Id</th>
             <th>Type</th>
@@ -54,9 +58,11 @@
           </tr>
         </thead>
         <tbody>
+          <!-- Loop through the auth tokens and display them -->
           {% for token in data.authTokens%}
             <tr>
               <td>{{ token.id }}</td>
+              <!-- This is the form to edit the type of the auth token -->
               <form id="form{{ token.id }}" method="POST" action="/authToken/{{ token.id }}/update">
               <td>{{ render_field2((forms[token.id]).tokenType, class_="form-control") }}</td>
               </form>
@@ -72,12 +78,13 @@
               </td>
               <td>
                 <form action="/authToken/{{ token.id }}/delete" method="post">
-                  <button type="submit" class="btn btn-primary">Delete</button>
+                  <button type="submit" class="btn btn-danger">Delete</button>
               </form>
             </tr>
           {% endfor %}
         </tbody>
       </table>
+      <!-- This is the button to add a new auth token -->
       <form action="/data/{{data.id}}/new" method="post">
         <button type="submit" class="btn btn-primary">Add Auth Token</button>
     </form>

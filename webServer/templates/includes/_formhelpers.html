@@ -1,6 +1,10 @@
+<!-- marco to render a form field with its name -->
 {% macro render_field(field) %}
+  <!-- Display the label/name of the field -->
   {{ field.label }}
+  <!-- Display the field -->
   {{ field(**kwargs)|safe }}
+  <!-- If there are errors, loop through them and display them -->
   {% if field.errors %}
     {% for error in field.errors %}
       <span class="help-inline">{{ error }}</span>
@@ -8,8 +12,11 @@
   {% endif %}
 {% endmacro %}
 
+<!-- marco to render a form field without its name -->
 {% macro render_field2(field) %}
+  <!-- Display the field -->
   {{ field(**kwargs)|safe }}
+  <!-- If there are errors, loop through them and display them -->
   {% if field.errors %}
     {% for error in field.errors %}
       <span class="help-inline">{{ error }}</span>

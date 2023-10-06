@@ -1,75 +1,88 @@
 <!DOCTYPE html>
 <html>
+  <!-- Head Section -->
   <head>
+    <!-- Set the character encoding -->
     <meta charset="utf-8">
+    <!-- Set the title -->
     <title>Python Data Store</title>
-    
+    <!-- Include the Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <!-- The block section allows other templates to extend the head section -->
+    {% block head %}
+    {% endblock %}
 
-    {% block head %}<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">{% endblock %}
+    <!-- This is the CSS for the tables -->
+    <style>
+      table {
+        float: left;
+        width: 70%;
+        padding: 20px;
+      }
+      table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+      }
+      th, td {
+        padding: 15px;
+        text-align: left;
+      }
+      table#t01 tr:nth-child(even) {
+        background-color: #eee;
+      }
+      table#t01 tr:nth-child(odd) {
+      background-color: #fff;
+      }
+      table#t01 th {
+        background-color: black;
+        color: white;
+      }
 
+      div#f010{
+        float: left;
+        width: 30%;
+        padding: 20px;
+        background: lightgrey 95%;
+        border: 1px solid black;
+        border-radius: 8px;
+        background-clip: padding-box;
+      }
 
-<style>
+      div#f011{
+        float: left;
+        padding: 20px;
+        background: lightgrey 95%;
+        border: 1px solid black;
+        border-radius: 8px;
+        background-clip: padding-box;
+      }
 
+    </style>
 
-table {
-  float: left;
-  width: 70%;
-  padding: 20px;
-}
-table, th, td {
-  border: 1px solid black;
-  border-collapse: collapse;
-}
-th, td {
-  padding: 15px;
-  text-align: left;
-}
-table#t01 tr:nth-child(even) {
-  background-color: #eee;
-}
-table#t01 tr:nth-child(odd) {
- background-color: #fff;
-}
-table#t01 th {
-  background-color: black;
-  color: white;
-}
+    <!-- The script to get the font awesome icons -->
+    <script src="https://kit.fontawesome.com/e068fb725b.js" crossorigin="anonymous"></script>
 
-div#f010{
-  float: left;
-  width: 30%;
-  padding: 20px;
-  background: lightgrey 95%;
-  border: 1px solid black;
-  border-radius: 8px;
-  background-clip: padding-box;
-}
-
-div#f011{
-  float: left;
-  padding: 20px;
-  background: lightgrey 95%;
-  border: 1px solid black;
-  border-radius: 8px;
-  background-clip: padding-box;
-}
-
-</style>
-<script src="https://kit.fontawesome.com/e068fb725b.js" crossorigin="anonymous"></script>
   </head>
+
   <body>
+    <!-- Include the navbar -->
     {% include 'includes/_navbar.html' %}
+    <!-- The container is the main section of the page -->
     <div class="container">
+      <!-- Include the messages -->
       {% include 'includes/_messages.html' %}
+      <!-- The block section allows other templates to extend the body section -->
       {% block body %}{% endblock %}
-	  <p></p>
-	  {% include 'includes/_messages2.html' %}
+	    <p></p>
+      <!-- Include the messages for the bottom of the page-->
+	    {% include 'includes/_messages2.html' %}
     </div>
 
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="//cdn.ckeditor.com/4.6.2/basic/ckeditor.js"></script>
+    <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> -->
+    
+    <!-- <script src="//cdn.ckeditor.com/4.6.2/basic/ckeditor.js"></script>
     <script type="text/javascript">
       CKEDITOR.replace('editor')
-    </script>
+    </script> -->
   </body>
 </html>

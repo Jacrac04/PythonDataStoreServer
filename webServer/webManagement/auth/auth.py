@@ -1,9 +1,9 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash, session, has_request_context
+from flask import Blueprint, render_template, redirect, url_for, request, flash
 from werkzeug.security import check_password_hash
 from webServer.models import User
 from webServer import db
 from wtforms import Form, StringField, PasswordField, validators
-from webServer.authHandling.loginUtils import login_required, login_user, logout_user, current_user
+from webServer.authHandling.loginUtils import login_required, login_user, logout_user
 
     
 
@@ -18,7 +18,7 @@ auth = Blueprint(
 class Registerform(Form):
     name = StringField('Name', [validators.Length(min=1, max=50)])
     username = StringField('Username', [validators.Length(min=4, max=25)])
-    email = StringField('Email', [validators.Length(min=6, max=50)])
+    email = StringField('Email', [validators.Length(min=6, max=50), validators.Email()])
 
     password = PasswordField('Password', [
         validators.DataRequired(),
@@ -33,9 +33,7 @@ def login():
         password_candidate = request.form['password']
         remember = True if request.form.get('remember') else False
 
-        user = User.query.filter_by(email=email)
-        print(user)
-        user = user[0]
+        user = User.query.filter_by(email=email).first()
         if not user or not check_password_hash(
                 user.password, password_candidate):
             flash('Please check your login details and try again.', 'danger')
@@ -60,10 +58,10 @@ def register():
             name = username
 
         # if this returns a user, then the email already exists in database
-        user = User.query.filter_by(email=email)[0]
+        user = User.query.filter_by(email=email).first()
 
         if user:  # if a user is found, we want to redirect back to signup page so user can try again
-            flash('Email address already exists')
+            flash('Email address already exists', 'danger')
             return redirect(url_for('auth.register'))
 
         # create new user with the form data. Hash the password so plaintext
@@ -71,8 +69,8 @@ def register():
         new_user = User(email=email, name=name, password=password)
 
         # add the new user to the database
-        db.session.add(new_user)
-        db.session.commit()
+        # db.session.add(new_user)
+        # db.session.commit()
 
         flash('You are now registered and can log in', 'success')
 
